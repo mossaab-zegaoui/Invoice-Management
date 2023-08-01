@@ -1,0 +1,105 @@
+a.nav-link {
+    cursor: pointer;
+  }
+  
+  a#profile.nav-link.active {
+    background-color: #859ea1;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  a#password.nav-link.active {
+    background-color: #859ea1;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  a#security.nav-link.active {
+    background-color: #859ea1;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  a#application.nav-link.active {
+    background-color: #859ea1;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  a#notification.nav-link.active {
+    background-color: #859ea1;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .shadow {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  .profile-tab-nav {
+    min-width: 250px;
+  }
+  
+  .tab-content {
+    flex: 1;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .nav-pills a.nav-link {
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0;
+    color: #333;
+  }
+  
+  .nav-pills a.nav-link i {
+    width: 20px;
+  }
+  
+  .img-circle img {
+    height: 100px;
+    width: 100px;
+    border-radius: 100%;
+    border: 5px solid #fff;
+  }
+  
+  .right-position {
+    position: absolute;
+    bottom: 30px;
+    color: #2e394a;
+    left: 70px;
+    top: 35px;
+    border-radius: 4px;
+    font-size: 23px;
+    cursor: pointer;
+  }
+  
+  .unclickable {
+    pointer-events: none;
+    /* color: #AAA; */
+    background: #f5f5f5;
+  }
+  
+  .btn-update,
+  .btn-update {
+    background-color: #1a8e98;
+    border: none;
+  }
+  
+  .btn-report {
+    background-color: #956767;
+    color: #f5f5f5;
+    font-weight: 450;
+  }
+  .created-at-info {
+    font-weight: 200;
+    font-size: smaller;
+  }
+  
+  /* input[type="checkbox"] {
+    accent-color: #956767;
+  } */
+  

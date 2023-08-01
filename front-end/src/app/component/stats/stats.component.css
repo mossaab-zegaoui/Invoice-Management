@@ -1,0 +1,91 @@
+.rounded {
+  -webkit-border-radius: 3px !important;
+  -moz-border-radius: 3px !important;
+  border-radius: 3px !important;
+}
+
+.mini-stat {
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.mini-stat-icon {
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  line-height: 60px;
+  text-align: center;
+  font-size: 30px;
+  background: none repeat scroll 0% 0% #eee;
+  border-radius: 100%;
+  float: left;
+  margin-right: 10px;
+  color: #fff;
+}
+
+.mini-stat-info {
+  font-size: 12px;
+  padding-top: 2px;
+}
+
+span,
+p {
+  color: white;
+}
+
+.mini-stat-info span {
+  display: block;
+  font-size: 30px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  margin-top: 7px;
+}
+
+/* ================ colors =====================*/
+.bg-facebook {
+  background-color: #41908a !important;
+  border: 1px solid #41908a;
+  color: white;
+}
+/* }
+<!-- <i class="bi bi-people-fill fg-facebook"></i> --> */
+
+.bi-person-plus {
+  color: #294d59 !important;
+}
+
+/* .fg-facebook {
+  color: #294d59 !important;
+} */
+
+.bg-twitter {
+  background-color: #79a8cd !important;
+  border: 1px solid #79a8cd;
+  color: white;
+}
+
+/* border: 1px solid #9fafc0; */
+
+.fg-twitter {
+  color: #344b64 !important;
+}
+
+.bg-googleplus {
+  background-color: #877195 !important;
+  border: 1px solid #877195;
+  color: white;
+}
+
+.bi-receipt {
+  color: #40425c !important;
+}
+
+.bg-bitbucket {
+  background-color: #6218b0 !important;
+  border: 1px solid #6218b0;
+  color: white;
+}
+
+.fg-bitbucket {
+  color: #4f096a !important;
+}
