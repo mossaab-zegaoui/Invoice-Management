@@ -1,13 +1,10 @@
 package com.example.securebusiness.model;
 
 import com.example.securebusiness.dto.UserDTO;
-import com.example.securebusiness.mapper.UserDTOMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -32,12 +29,12 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return this.user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return this.user.getEmail();
     }
 
     @Override
@@ -47,7 +44,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return user.isNotLocked();
+        return this.user.isNotLocked();
     }
 
     @Override
@@ -57,7 +54,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.isEnabled();
+        return this.user.isEnabled();
     }
 
     public UserDTO getUser() {

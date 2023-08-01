@@ -1,0 +1,88 @@
+<ng-container *ngIf="invoicesState$ | async as state" [ngSwitch]="state.dataState">
+    <ng-container *ngSwitchCase="DataState.LOADED">
+        <app-navbar [user]="state?.data?.data?.user"></app-navbar>
+        <section>
+            <div class="container">
+                <nav aria-label="breadcrumb" style="margin-top: 8px">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a [routerLink]="['/']">Home</a></li>
+                        <li class="breadcrumb-item active">Invoices</li>
+                    </ol>
+                </nav>
+                <div class="row mt-3">
+                    <div class="col">
+                        <h4 class="fw-bold text-start">Invoices</h4>
+                    </div>
+                    <div class="col">
+                        <h4 class="fw-bold text-end">
+                            <i style="cursor: pointer; color: green; font-size: 30px"
+                                class="bi bi-file-earmark-excel"></i>
+                        </h4>
+                    </div>
+                    <div class="col-xm-12">
+                        <table class="table table-hover">
+                            <thead class="top-menu">
+                                <tr>
+                                    <th scope="col">Invoice Number</th>
+                                    <th scope="col">Service</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-body">
+                                <tr *ngFor="let invoice of state?.data?.data?.invoices" class="cell-1">
+                                    <td>{{ invoice.invoiceNumber }}</td>
+                                    <td>{{ invoice.services }}</td>
+                                    <td>
+                                        <span class="badge rounded-pill" [ngClass]="[
+                        invoice.status === 'PAID' ? ' bg-success' : '',
+                        invoice.status === 'UNPAID' ? ' bg-primary' : '',
+                        invoice.status === 'CANCELED' ? 'bg-warning' : '',
+                        invoice.status === 'OVERDUE' ? ' bg-danger' : ''
+                      ]">
+                                            {{ invoice.status }}
+                                        </span>
+                                    </td>
+                                    <td>{{ invoice.date | date : "mediumDate" }}</td>
+                                    <td>${{ invoice.total }}</td>
+                                    <td>
+                                        <button [routerLink]="[
+                        '/invoices',
+                        invoice.id,
+                        invoice.invoiceNumber
+                      ]" type="button" class="btn btn-info btn-sm">
+                                            Print
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-end">
+                                <li class="page-item pointer">
+                                    <a class="page-link">&laquo; Prev</a>
+                                </li>
+                                <li *ngFor="
+                    let pageNumber of [].constructor(
+                    );
+                    let i = index
+                  " class="page-item pointer">
+                                    <a [ngClass]="
+                    " class="page-link">
+                                        {{ i + 1 }}
+                                    </a>
+                                </li>
+                                <li class="page-item pointer">
+                                    <a (click)="goToNextOrPreviousPage('forward')" class="page-link">Next &raquo;</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </ng-container>
+</ng-container>

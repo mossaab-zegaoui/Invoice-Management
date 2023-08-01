@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Observable, catchError, map, of, startWith } from 'rxjs';
 import { DataState } from 'src/app/enum/dataState.enum';
-import { RegisterState } from 'src/app/model/appstates';
+import { RegisterState } from 'src/app/interface/appstates';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
