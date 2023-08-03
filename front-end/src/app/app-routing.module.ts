@@ -4,10 +4,12 @@ import { LoginComponent } from './component/login/login.component';
 import { RegisterComponent } from './component/register/register.component';
 import { HomeComponent } from './component/home/home.component';
 import { AuthenticationGuard } from './guard/auth.guard';
-import { CustomerComponent } from './component/customer/customer.component';
+import { NewCustomerComponent } from './component/customers/new-customer/new-customer.component';
 import { NewInvoiceComponent } from './component/invoices/new-invoice/new-invoice.component';
 import { InvoicesComponent } from './component/invoices/invoices.component';
 import { ProfileComponent } from './component/profile/profile.component';
+import {CustomersComponent} from "./component/customers/customers.component";
+import {EditCustomerComponent} from "./component/customers/edit-customer/edit-customer.component";
 
 const routes: Routes = [
   { path: 'register', component: RegisterComponent },
@@ -19,7 +21,7 @@ const routes: Routes = [
   },
   {
     path: 'customers/new',
-    component: CustomerComponent,
+    component: NewCustomerComponent,
     canActivate: [AuthenticationGuard],
   },
   {
@@ -35,6 +37,16 @@ const routes: Routes = [
   {
     path: 'profile',
     component: ProfileComponent,
+    canActivate: [AuthenticationGuard],
+  },
+  {
+    path: 'customers',
+    component: CustomersComponent,
+    canActivate: [AuthenticationGuard],
+  },
+  {
+    path: 'customers/edit/:id',
+    component: EditCustomerComponent,
     canActivate: [AuthenticationGuard],
   },
   { path: '', redirectTo: '/home', pathMatch: 'full' },

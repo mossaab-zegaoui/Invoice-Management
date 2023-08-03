@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DataState } from '../../enum/dataState.enum';
+import { DataState } from '../../../enum/dataState.enum';
 import {
   BehaviorSubject,
   catchError,
@@ -8,19 +8,19 @@ import {
   of,
   startWith,
 } from 'rxjs';
-import { Customer } from '../../interface/customer';
-import { CustomHttpResponse } from '../../interface/customHttpResponse';
-import { ResponseData } from '../../interface/appstates';
-import { CustomerService } from '../../services/customer.service';
+import { Customer } from '../../../interface/customer';
+import { CustomHttpResponse } from '../../../interface/customHttpResponse';
+import { ResponseData } from '../../../interface/appstates';
+import { CustomerService } from '../../../services/customer.service';
 import { NgForm } from '@angular/forms';
-import { State } from '../../interface/state';
+import { State } from '../../../interface/state';
 
 @Component({
-  selector: 'app-customer',
-  templateUrl: './customer.component.html',
-  styleUrls: ['./customer.component.css'],
+  selector: 'app-new-edit-customer',
+  templateUrl: './new-customer.component.html',
+  styleUrls: ['./new-customer.component.css'],
 })
-export class CustomerComponent implements OnInit {
+export class NewCustomerComponent implements OnInit {
   readonly DataState = DataState;
   newCustomerState$: Observable<State<CustomHttpResponse<ResponseData>>> | undefined ;
   private dataSubject = new BehaviorSubject<

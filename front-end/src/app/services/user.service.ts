@@ -71,7 +71,43 @@ export class UserService {
       )
       .pipe(tap(console.log), catchError(this.handleError));
   }
+  updateUserRole$(
+    roleName: string
+  ): Observable<CustomHttpResponse<ResponseData>> {
+    return this.http
+      .put<CustomHttpResponse<ResponseData>>(
+        `${this.apiUrl}/updateUserRole`,
+        roleName
+      )
+      .pipe(tap(console.log), catchError(this.handleError));
+  }
+  updateUserAccountSettings$(accountSettingsForm: {
+    isNotEnabled: boolean;
+    isNotLocked: boolean;
+  }): Observable<CustomHttpResponse<ResponseData>> {
+    return this.http
+      .put<CustomHttpResponse<ResponseData>>(
+        `${this.apiUrl}/updateUserAccountSettings`,
+        accountSettingsForm
+      )
+      .pipe(tap(console.log), catchError(this.handleError));
+  }
 
+  toggleMfa(): Observable<CustomHttpResponse<ResponseData>> {
+    return this.http
+      .put<CustomHttpResponse<ResponseData>>(`${this.apiUrl}/toggleMfa`, null)
+      .pipe(tap(console.log), catchError(this.handleError));
+  }
+  uploadProfileImage$(
+    formData: FormData
+  ): Observable<CustomHttpResponse<ResponseData>> {
+    return this.http
+      .put<CustomHttpResponse<ResponseData>>(
+        `${this.apiUrl}/uploadImage`,
+        formData
+      )
+      .pipe(tap(console.log), catchError(this.handleError));
+  }
   private handleError(error: any): Observable<never> {
     console.log(error);
     let errorMessage: string;

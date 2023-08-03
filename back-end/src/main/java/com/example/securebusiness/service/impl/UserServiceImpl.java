@@ -2,30 +2,37 @@ package com.example.securebusiness.service.impl;
 
 import com.example.securebusiness.dto.UserDTO;
 import com.example.securebusiness.exception.ApiException;
+import com.example.securebusiness.form.AccountSettingsForm;
 import com.example.securebusiness.form.UpdatePasswordForm;
-import com.example.securebusiness.mapper.UserDTOMapper;
 import com.example.securebusiness.model.Role;
 import com.example.securebusiness.model.User;
 import com.example.securebusiness.repository.RoleRepository;
 import com.example.securebusiness.repository.UserRepository;
 import com.example.securebusiness.service.UserService;
+import com.example.securebusiness.utils.FileStorageUtils;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static com.example.securebusiness.enums.RoleType.ROLE_USER;
 import static com.example.securebusiness.mapper.UserDTOMapper.fromUser;
-import static com.example.securebusiness.mapper.UserDTOMapper.toUser;
+import static com.example.securebusiness.utils.FileStorageUtils.FOLDER_PATH;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+
 
     @Override
     public UserDTO createUser(User user) {
@@ -82,6 +89,48 @@ public class UserServiceImpl implements UserService {
         return fromUser(userRepository.save(user));
     }
 
+    @Override
+    public UserDTO updateUserRole(User user, String roleName) {
+        Role role = roleRepository.findByName(roleName);
+        user.setRole(role);
+        log.info("{} update his role to {}", user.getEmail(), user.getRole().getName());
+        return fromUser(userRepository.save(user));
+    }
+
+    @Override
+    public UserDTO updateUserAccountSettings(User user, AccountSettingsForm accountSettingsForm) {
+        user.setEnabled(accountSettingsForm.isEnabled());
+        user.setNotLocked(accountSettingsForm.isNotLocked());
+        return fromUser(userRepository.save(user));
+    }
+
+    @Override
+    public UserDTO toggleMfa(User user) {
+        if (user.getPhone().isBlank())
+            throw new ApiException("you have to add your phone number before enabling MFA");
+        user.setUsingMfa(!user.isUsingMfa());
+        return fromUser(userRepository.save(user));
+    }
+
+    @Override
+    public UserDTO updateProfileImage(User user, MultipartFile file) {
+        String filePath = FOLDER_PATH + file.getOriginalFilename();
+        user.setImageUrl(file.getOriginalFilename());
+        try {
+            file.transferTo(new File(filePath));
+        } catch (IOException exception) {
+            throw new ApiException("folder couldn't be uploaded" + exception.getMessage());
+        }
+        return fromUser(userRepository.save(user));
+    }
+
+    @Override
+    public byte[] downloadImageProfile(User user, String imageUrl) throws IOException {
+        String filePath = FOLDER_PATH + imageUrl;
+        byte[] image = Files.readAllBytes(new File(filePath).toPath());
+        return image;
+    }
+
     private boolean checkIfValidOldPassword(final String password, final String currentPassword) {
         return passwordEncoder.matches(password, currentPassword);
     }
@@ -90,6 +139,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email).get();
         Role role = roleRepository.findByName(roleName);
         user.setRole(role);
+        log.info("assign {} to {}", role.getName(), user.getEmail());
         userRepository.save(user);
     }
 }

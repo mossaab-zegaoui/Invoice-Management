@@ -104,13 +104,105 @@ export class ProfileComponent implements OnInit {
       );
   }
 
-  updateRole(roleForm: NgForm): void {}
+  updateRole(roleForm: NgForm): void {
+    this.isLoadingSubject.next(true);
+    this.profileState$ = this.userService
+      .updateUserRole$(roleForm.value.roleName)
+      .pipe(
+        map((response) => {
+          this.dataSubject.next(response);
+          this.isLoadingSubject.next(false);
+          return { dataState: DataState.LOADED, data: this.dataSubject.value };
+        }),
+        startWith({
+          dataState: DataState.LOADING,
+          data: this.dataSubject.value,
+        }),
+        catchError((error) => {
+          this.isLoadingSubject.next(false);
+          return of({
+            dataState: DataState.ERROR,
+            data: this.dataSubject.value,
+            error: error,
+          });
+        })
+      );
+  }
 
-  updateAccountSettings(settingsForm: NgForm): void {}
+  updateAccountSettings(settingsForm: NgForm): void {
+    this.isLoadingSubject.next(true);
+    this.profileState$ = this.userService
+      .updateUserAccountSettings$(settingsForm.value)
+      .pipe(
+        map((response) => {
+          this.dataSubject.next(response);
+          this.isLoadingSubject.next(false);
+          return { dataState: DataState.LOADED, data: this.dataSubject.value };
+        }),
+        startWith({
+          dataState: DataState.LOADING,
+          data: this.dataSubject.value,
+        }),
+        catchError((error) => {
+          this.isLoadingSubject.next(false);
+          return of({
+            dataState: DataState.ERROR,
+            data: this.dataSubject.value,
+            error: error,
+          });
+        })
+      );
+  }
 
-  toggleMfa(): void {}
+  toggleMfa(): void {
+    this.isLoadingSubject.next(true);
+    this.profileState$ = this.userService.toggleMfa().pipe(
+      map((response) => {
+        this.dataSubject.next(response);
+        this.isLoadingSubject.next(false);
+        return { dataState: DataState.LOADED, data: this.dataSubject.value };
+      }),
+      startWith({ dataState: DataState.LOADING, data: this.dataSubject.value }),
+      catchError((error) => {
+        this.isLoadingSubject.next(false);
+        return of({
+          dataState: DataState.ERROR,
+          data: this.dataSubject.value,
+          error,
+        });
+      })
+    );
+  }
 
-  updatePicture(image: File): void {}
+  updatePicture(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const image = inputElement.files?.[0];
+    this.isLoadingSubject.next(true);
+    console.log(image);
+    if (image) {
+      this.profileState$ = this.userService
+        .uploadProfileImage$(this.getFormData(image))
+        .pipe(
+          map((response) => {
+            this.dataSubject.next(response);
+            this.isLoadingSubject.next(false);
+            return { dataState: DataState.LOADED, data: response };
+          }),
+          startWith({
+            dataState: DataState.LOADING,
+            data: this.dataSubject.value,
+          }),
+          catchError((error) => {
+            this.isLoadingSubject.next(false);
+            return of({
+              dataState: DataState.ERROR,
+              data: this.dataSubject.value,
+              error,
+            });
+          })
+        );
+    }
+  }
 
   toggleLogs(): void {}
 

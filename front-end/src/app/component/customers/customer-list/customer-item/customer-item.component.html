@@ -1,0 +1,34 @@
+<tr
+  class="cell-1 pt-3"
+>
+  <th class="text-center">{{ customer?.id }}</th>
+  <td>
+    <img
+      [src]="customer?.imageUrl"
+      width="50"
+      height="50"
+      class="rounded-circle"
+      [alt]="customer?.name"
+    />
+  </td>
+  <td>{{ customer?.name }}</td>
+  <td>{{ customer?.email }}</td>
+  <td>{{ customer?.phone }}</td>
+  <td>
+                    <span
+                      class="badge rounded-pill"
+                      [ngClass]="[
+                        customer?.status === 'ACTIVE' ? ' bg-success' : '',
+                        customer?.status === 'PENDING' ? ' bg-primary' : '',
+                        customer?.status === 'BANNED' ? ' bg-danger' : '',
+                        customer?.status === 'INACTIVE' ? ' bg-info' : ''
+                      ]"
+                    >
+                      {{ customer?.status }}
+                    </span>
+  </td>
+  <td>{{ customer?.type }}</td>
+  <td>
+    <button type="button" (click)="selectCustomer(customer)" class="btn btn-info">View</button>
+  </td>
+</tr>

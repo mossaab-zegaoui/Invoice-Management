@@ -1,8 +1,14 @@
 package com.example.securebusiness.service;
 
 import com.example.securebusiness.dto.UserDTO;
+import com.example.securebusiness.form.AccountSettingsForm;
 import com.example.securebusiness.form.UpdatePasswordForm;
+import com.example.securebusiness.model.Role;
 import com.example.securebusiness.model.User;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 public interface UserService {
     UserDTO createUser(User user);
@@ -16,4 +22,13 @@ public interface UserService {
 
     UserDTO updateUserPassword(User user, UpdatePasswordForm updatePasswordForm);
 
+    UserDTO updateUserRole(User user, String roleName);
+
+    UserDTO updateUserAccountSettings(User user, AccountSettingsForm accountSettingsForm);
+
+    UserDTO toggleMfa(User user);
+
+    UserDTO updateProfileImage(User user, MultipartFile multipartFile) throws IOException;
+
+    byte[] downloadImageProfile(User user, String imageUrl) throws IOException;
 }

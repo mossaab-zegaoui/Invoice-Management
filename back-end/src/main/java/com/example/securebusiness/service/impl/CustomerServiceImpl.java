@@ -50,7 +50,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer updateCustomer(Customer customer, Long id) {
+        Customer savedCustomer = customerRepository.findById(id).orElseThrow(() -> new ApiException("customer with id" + id + " not found"));
         customer.setId(id);
+        customer.setInvoices(savedCustomer.getInvoices());
         return customerRepository.save(customer);
     }
 
