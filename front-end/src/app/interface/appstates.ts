@@ -1,5 +1,5 @@
 import { DataState } from '../enum/dataState.enum';
-import { Role } from './Role';
+import { Role } from './role';
 import { Customer } from './customer';
 import { Invoice } from './invoice';
 import { Stats } from './stats';

@@ -1,0 +1,66 @@
+<ng-container
+  *ngIf="customers$ | async as state"
+  [ngSwitch]="state.dataState"
+>
+  <ng-container *ngSwitchCase="DataState.LOADED">
+    <app-navbar [user]="state?.data?.data?.user"></app-navbar>
+    <section>
+      <div class="container">
+        <nav aria-label="breadcrumb" style="margin-top: 8px">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a [routerLink]="['/']">Home</a>
+            </li>
+            <li class="breadcrumb-item active">Customers</li>
+          </ol>
+        </nav>
+        <div class="row mt-3">
+          <div class="col">
+            <h4 class="fw-bold text-start">Customers</h4>
+          </div>
+          <div class="col">
+            <h4 class="fw-bold text-end">
+              <i
+                style="cursor: pointer; color: green; font-size: 30px"
+                class="bi bi-file-earmark-excel"
+              ></i>
+            </h4>
+          </div>
+          <div class="col-xm-12">
+            <form
+              #searchForm="ngForm"
+              (ngSubmit)="searchCustomers(searchForm)"
+              class="row g-3 float-end"
+            >
+              <div class="col-auto">
+                <label class="visually-hidden"></label>
+                <input
+                  type="text"
+                  ngModel
+                  name="name"
+                  #name
+                  class="form-control"
+                  placeholder="Customer Name"
+                />
+              </div>
+              <div class="col-auto">
+                <button type="submit" class="btn mb-3 btn-search">
+                  Search
+                </button>
+              </div>
+            </form>
+          </div>
+          <app-customer-list [customers]="state.data?.data?.customers"></app-customer-list>
+        </div>
+      </div>
+    </section>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="DataState.LOADING">
+    <div>Loading...</div>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="DataState.ERROR">
+    <div>{{ state.error }}</div>
+  </ng-container>
+</ng-container>

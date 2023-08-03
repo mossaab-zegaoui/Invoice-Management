@@ -1,0 +1,21 @@
+.total-billed {
+    background-color: #c4e2e5;
+    color: #54abb2;
+}
+
+th {
+    background-color: #2e394a !important;
+}
+h5 {
+    font-size: 17px;
+}
+label {
+    font-size: 15px;
+}
+.profile-info {
+    font-size: 15px;
+}
+.profile-details {
+    padding-bottom: 1em;
+    font-weight: 600;
+}

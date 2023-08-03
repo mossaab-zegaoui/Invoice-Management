@@ -15,12 +15,17 @@
             </li>
           </ol>
         </nav>
+        <div *ngSwitchCase="DataState.ERROR"
+          class="alert alert-danger bg-danger text-light border-0 alert-dismissible fade show" style="width: 100vh;" role="alert">
+          {{ state.error }}
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
         <div class="bg-white shadow rounded-lg d-block d-sm-flex" style="border-radius: 8px">
           <div class="profile-tab-nav border-right">
             <div class="p-4">
               <div class="img-circle text-center mb-3">
                 <span style="position: relative">
-                  <img [src]="state?.data?.data?.user?.imageUrl" alt="John" class="shadow" />
+                  <img [src]="'assets/'+ state?.data?.data?.user?.imageUrl" alt="John Doe" class="shadow" />
                   <i (click)="fileInput.click()" class="bi bi-camera-fill right-position"></i>
                 </span>
               </div>
@@ -64,55 +69,64 @@
             <div class="tab-pane fade show active" id="profile-tab" role="tabpanel" aria-labelledby="profile"
               style="min-height: 510px">
               <h3 class="mb-4">Profile Settings</h3>
-              <span *ngSwitchCase="DataState.ERROR">{{state.error}} </span>
-
               <form #profileForm="ngForm" (ngSubmit)="updateProfile(profileForm)">
                 <input type="hidden" name="id" [ngModel]="state?.data?.data?.user?.id" />
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>First Name</label>
-                      <input type="text" name="firstName" [ngModel]="state?.data?.data?.user?.firstName"
-                        class="form-control" />
+                      <input type="text" name="firstName" [ngModel]="state?.data?.data?.user?.firstName" [disabled]="!((state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') 
+                        || (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
+                        )||(isLoading$ | async)===true" class="form-control" />
                     </div>
+
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Last Name</label>
-                      <input type="text" name="lastName" [ngModel]="state?.data?.data?.user?.lastName"
-                        class="form-control" />
+                      <input type="text" name="lastName" [ngModel]="state?.data?.data?.user?.lastName" [disabled]="!((state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') 
+                        || (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
+                        )||(isLoading$ | async)===true" class="form-control" />
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="email">Email</label>
-                      <input type="text" name="email" [ngModel]="state?.data?.data?.user?.email" class="form-control" />
+                      <input type="text" name="email" [ngModel]="state?.data?.data?.user?.email" [disabled]=" !((state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') 
+                        || (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
+                        ) ||(isLoading$ | async)===true" class="form-control" />
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Phone</label>
-                      <input type="text" name="phone" [ngModel]="state?.data?.data?.user?.phone" class="form-control" />
+                      <input type="text" name="phone" [ngModel]="state?.data?.data?.user?.phone" [disabled]="!((state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') 
+                        || (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
+                        ) || (isLoading$ | async)===true" class="form-control" />
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Address</label>
-                      <input type="text" name="address" [ngModel]="state?.data?.data?.user?.address"
-                        class="form-control" />
+                      <input type="text" name="address" [ngModel]="state?.data?.data?.user?.address" [disabled]="!((state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') 
+                        || (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
+                        ) ||(isLoading$ | async)===true" class="form-control" />
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Job Title</label>
-                      <input type="text" name="title" [ngModel]="state?.data?.data?.user?.title" class="form-control" />
+                      <input type="text" name="title" [ngModel]="state?.data?.data?.user?.title" [disabled]="!((state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') 
+                        || (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
+                        ) || (isLoading$ | async)===true" class="form-control" />
                     </div>
                   </div>
                   <div class="col-md-12">
                     <div class="form-group">
                       <label>Bio</label>
-                      <textarea name="bio" [ngModel]="state?.data?.data?.user?.bio" class="form-control"
-                        rows="4"></textarea>
+                      <textarea name="bio" [ngModel]="state?.data?.data?.user?.bio" [disabled]="!((state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') 
+                        || (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
+                        ) || (isLoading$ | async)===true" class="form-control" rows="4"></textarea>
                     </div>
                   </div>
                 </div>
@@ -128,19 +142,15 @@
             </div>
             <div class="tab-pane fade" id="password-tab" role="tabpanel" aria-labelledby="password"
               style="min-height: 510px">
-              <div *ngSwitchCase="DataState.ERROR"
-                class="alert alert-danger bg-danger text-light border-0 alert-dismissible fade show" role="alert">
-                {{ state.error }}
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
-                  aria-label="Close"></button>
-              </div>
+
               <h3 class="mb-4">Password Settings</h3>
               <form #passwordForm="ngForm" (ngSubmit)="updatePassword(passwordForm)">
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Current password</label>
-                      <input type="password" name="currentPassword" ngModel class="form-control" required />
+                      <input type="password" name="currentPassword" ngModel [disabled]="(isLoading$ | async)===true"
+                        class="form-control" required />
                     </div>
                   </div>
                 </div>
@@ -148,14 +158,15 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>New password</label>
-                      <input type="password" name="newPassword" ngModel class="form-control" minlength="5" required />
+                      <input type="password" name="newPassword" ngModel [disabled]="(isLoading$ | async)===true"
+                        class="form-control" minlength="5" required />
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Confirm new password</label>
-                      <input type="password" name="confirmNewPassword" ngModel class="form-control" minlength="5"
-                        required />
+                      <input type="password" name="confirmNewPassword" [disabled]="(isLoading$ | async)===true" ngModel
+                        class="form-control" minlength="5" required />
                     </div>
                   </div>
                 </div>
@@ -170,331 +181,163 @@
                 </div>
               </form>
             </div>
-            <!-- <div
-                class="tab-pane fade"
-                id="password-tab"
-                role="tabpanel"
-                aria-labelledby="password"
-                style="min-height: 510px"
-              >
-                <h3 class="mb-4">Password Settings</h3>
-                <form
-                  #passwordForm="ngForm"
-                  (ngSubmit)="updatePassword(passwordForm)"
-                >
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Current password</label>
-                        <input
-                          type="password"
-                          name="currentPassword"
-                          ngModel
-                          [disabled]="isLoading$ | async"
-                          class="form-control"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>New password</label>
-                        <input
-                          type="password"
-                          name="newPassword"
-                          ngModel
-                          [disabled]="isLoading$ | async"
-                          class="form-control"
-                          minlength="5"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Confirm new password</label>
-                        <input
-                          type="password"
-                          name="confirmNewPassword"
-                          ngModel
-                          [disabled]="isLoading$ | async"
-                          class="form-control"
-                          minlength="5"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <button
-                      [disabled]="passwordForm.invalid || (isLoading$ | async)"
-                      type="submit"
-                      class="btn btn-primary btn-update"
-                    >
-                      <span
-                        *ngIf="isLoading$ | async"
-                        class="spinner-border spinner-border-sm"
-                        role="status"
-                        aria-hidden="true"
-                        style="margin-right: 5px"
-                      ></span>
-                      <span *ngIf="isLoading$ | async">Loading...</span>
-                      <span *ngIf="!(isLoading$ | async)">Update</span>
-                    </button>
-                  </div>
-                </form>
-              </div>
-              <div
-                class="tab-pane fade"
-                id="security-tab"
-                role="tabpanel"
-                aria-labelledby="security"
-                style="min-height: 510px"
-              >
-                <h3 class="mb-4">Authorization Settings</h3>
-                <form #roleForm="ngForm" (ngSubmit)="updateRole(roleForm)">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label style="margin-bottom: 5px">Role Name</label>
-                        <select
-                          name="roleName"
-                          [ngModel]="state?.data?.data?.user?.roleName"
-                          [disabled]="
-                            !(
-                              state?.data?.data?.user?.roleName ===
-                                'ROLE_SYSADMIN' ||
-                              state?.data?.data?.user?.roleName ===
-                                'ROLE_ADMIN'
-                            ) || (isLoading$ | async)
-                          "
-                          class="form-control select-cl"
-                          required
-                        >
-                          <option
-                            *ngFor="let role of state?.data?.data?.roles"
-                            [selected]="
+            <div class="tab-pane fade" id="security-tab" role="tabpanel" aria-labelledby="security"
+              style="min-height: 510px">
+              <h3 class="mb-4">Authorization Settings</h3>
+              <form #roleForm="ngForm" (ngSubmit)="updateRole(roleForm)">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label style="margin-bottom: 5px">Role Name</label>
+                      <select name="roleName" [ngModel]="state?.data?.data?.user?.roleName" [disabled]="!(
+  (state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') ||
+  (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
+) || ((isLoading$ | async) === true )" class="form-control select-cl" required>
+                        <option *ngFor="let role of state?.data?.data?.roles" [selected]="
                               state?.data?.data?.user?.roleName === role.name
-                            "
-                            [disabled]="
+                            " [disabled]="
                               !(
                                 state?.data?.data?.user?.roleName ===
                                   'ROLE_SYSADMIN' ||
                                 state?.data?.data?.user?.roleName ===
                                   'ROLE_ADMIN'
                               ) || (isLoading$ | async)
-                            "
-                            [ngValue]="role.name"
-                            class="select-cl"
-                          >
-                            {{ role.name }}
-                          </option>
-                        </select>
-                      </div>
+                            " [ngValue]="role.name" class="select-cl">
+                          {{ role.name }}
+                        </option>
+                      </select>
                     </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label style="margin-bottom: 5px">Role Permissions</label>
-                        <input
-                          type="text"
-                          *ngFor="
-                            let permission of state?.data?.data?.user?.permission.split(
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label style="margin-bottom: 5px">Role Permissions</label>
+                      <input type="text" *ngFor="
+                            let permission of state?.data?.data?.user?.permission!.split(
                               ','
                             )
-                          "
-                          [value]="permission"
-                          [disabled]="true"
-                          class="form-control"
-                          style="margin-bottom: 5px"
-                        />
-                      </div>
+                          " [value]="permission" [disabled]="true" class="form-control" style="margin-bottom: 5px" />
                     </div>
                   </div>
-                  <div>
-                    <button
-                      [disabled]="
+                </div>
+                <div>
+                  <button [disabled]="
                         !(
                           state?.data?.data?.user?.roleName ===
                             'ROLE_SYSADMIN' ||
                           state?.data?.data?.user?.roleName === 'ROLE_ADMIN'
                         ) || (isLoading$ | async)
-                      "
-                      type="submit"
-                      class="btn btn-primary btn-update"
-                    >
-                      <span
-                        *ngIf="isLoading$ | async"
-                        class="spinner-border spinner-border-sm"
-                        role="status"
-                        aria-hidden="true"
-                        style="margin-right: 5px"
-                      ></span>
-                      <span *ngIf="isLoading$ | async">Loading...</span>
-                      <span *ngIf="!(isLoading$ | async)">Update</span>
-                    </button>
-                  </div>
-                </form>
-              </div>
-              <div
-                class="tab-pane fade"
-                id="application-tab"
-                role="tabpanel"
-                aria-labelledby="application"
-                style="min-height: 510px"
-              >
-                <h3 class="mb-4">Account Settings</h3>
-                <form
-                  #settingsForm="ngForm"
-                  (ngSubmit)="updateAccountSettings(settingsForm)"
-                >
-                  <input type="hidden" name="userId" />
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <div class="form-check">
-                          <input
-                            [disabled]="
+                      " type="submit" class="btn btn-primary btn-update">
+                    <span *ngIf="isLoading$ | async" class="spinner-border spinner-border-sm" role="status"
+                      aria-hidden="true" style="margin-right: 5px"></span>
+                    <span *ngIf="isLoading$ | async">Loading...</span>
+                    <span *ngIf="!(isLoading$ | async)">Update</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div class="tab-pane fade" id="application-tab" role="tabpanel" aria-labelledby="application"
+              style="min-height: 510px">
+              <h3 class="mb-4">Account Settings</h3>
+              <form #settingsForm="ngForm" (ngSubmit)="updateAccountSettings(settingsForm)">
+                <input type="hidden" name="userId" />
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <div class="form-check">
+                        <input [disabled]="
                               !(
                                 state?.data?.data?.user?.roleName ===
                                   'ROLE_SYSADMIN' ||
                                 state?.data?.data?.user?.roleName ===
                                   'ROLE_ADMIN'
-                              ) || (isLoading$ | async)
-                            "
-                            [checked]="state?.data?.data?.user?.enabled"
-                            [ngModel]="state?.data?.data?.user?.enabled"
-                            type="checkbox"
-                            name="enabled"
-                            class="form-check-input"
-                          />
-                          <label class="form-check-label" for="enabled">
-                            Account Active
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <input
-                            [disabled]="
+                              ) || ((isLoading$ | async) === true)
+                            " [checked]="state?.data?.data?.user?.enabled" [ngModel]="state?.data?.data?.user?.enabled"
+                          type="checkbox" name="enabled" class="form-check-input" />
+                        <label class="form-check-label" for="enabled">
+                          Account Active
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input [disabled]="
                               !(
                                 state?.data?.data?.user?.roleName ===
                                   'ROLE_SYSADMIN' ||
                                 state?.data?.data?.user?.roleName ===
                                   'ROLE_ADMIN'
-                              ) || (isLoading$ | async)
-                            "
-                            [checked]="state?.data?.data?.user?.notLocked"
-                            [ngModel]="state?.data?.data?.user?.notLocked"
-                            type="checkbox"
-                            name="notLocked"
-                            class="form-check-input"
-                          />
-                          <label class="form-check-label" for="notLocked">
-                            Account Unlocked
-                          </label>
-                        </div>
+                              ) || ((isLoading$ | async) === true)
+                            " [checked]="state?.data?.data?.user?.notLocked"
+                          [ngModel]="state?.data?.data?.user?.notLocked" type="checkbox" name="notLocked"
+                          class="form-check-input" />
+                        <label class="form-check-label" for="notLocked">
+                          Account Unlocked
+                        </label>
                       </div>
                     </div>
                   </div>
-                  <div>
-                    <button
-                      [disabled]="
+                </div>
+                <div>
+                  <button [disabled]="
                         !(
                           state?.data?.data?.user?.roleName ===
                             'ROLE_SYSADMIN' ||
                           state?.data?.data?.user?.roleName === 'ROLE_ADMIN'
                         ) || (isLoading$ | async)
-                      "
-                      type="submit"
-                      class="btn btn-primary btn-update"
-                    >
-                      <span
-                        *ngIf="isLoading$ | async"
-                        class="spinner-border spinner-border-sm"
-                        role="status"
-                        aria-hidden="true"
-                        style="margin-right: 5px"
-                      ></span>
-                      <span *ngIf="isLoading$ | async">Loading...</span>
-                      <span *ngIf="!(isLoading$ | async)">Update</span>
-                    </button>
-                  </div>
-                </form>
-              </div>
-              <div
-                class="tab-pane fade"
-                id="notification-tab"
-                role="tabpanel"
-                aria-labelledby="notification"
-                style="min-height: 510px"
-              >
-                <h3 class="mb-4">Authentication Settings</h3>
-                <p>These settings help keep your account more secure.</p>
-                <div class="list-group mb-5 shadow">
-                  <div class="list-group-item">
-                    <div class="row align-items-center">
-                      <div class="col">
-                        <strong class="mb-2">Multi-Factor Authentication</strong>
-                        <span
-                          *ngIf="state?.data?.data?.user?.usingMfa"
-                          class="badge bg-success mx-3"
-                          >Enabled</span
-                        >
-                        <span
-                          *ngIf="!state?.data?.data?.user?.usingMfa"
-                          class="badge bg-warning mx-3"
-                          >Disabled</span
-                        >
-                        <p class="text-muted mb-0">
-                          Set up Multi-factor Authentication (MFA) help keep your
-                          account more secure
-                        </p>
-                      </div>
-                      <div class="col-auto">
-                        <button
-                          (click)="toggleMfa()"
-                          [disabled]="
+                      " type="submit" class="btn btn-primary btn-update">
+                    <span *ngIf="isLoading$ | async" class="spinner-border spinner-border-sm" role="status"
+                      aria-hidden="true" style="margin-right: 5px"></span>
+                    <span *ngIf="isLoading$ | async">Loading...</span>
+                    <span *ngIf="!(isLoading$ | async)">Update</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div class="tab-pane fade" id="notification-tab" role="tabpanel" aria-labelledby="notification"
+              style="min-height: 510px">
+              <h3 class="mb-4">Authentication Settings</h3>
+
+              <p>These settings help keep your account more secure.</p>
+              <div class="list-group mb-5 shadow">
+                <div class="list-group-item">
+                  <div class="row align-items-center">
+                    <div class="col">
+                      <strong class="mb-2">Multi-Factor Authentication</strong>
+                      <span *ngIf="state?.data?.data?.user?.usingMfa" class="badge bg-success mx-3">Enabled</span>
+                      <span *ngIf="!state?.data?.data?.user?.usingMfa" class="badge bg-warning mx-3">Disabled</span>
+                      <p class="text-muted mb-0">
+                        Set up Multi-factor Authentication (MFA) help keep your
+                        account more secure
+                      </p>
+                    </div>
+                    <div class="col-auto">
+                      <button (click)="toggleMfa()" [disabled]="
                             state?.data?.data?.user?.roleName ===
                               'ROLE_USER' || (isLoading$ | async)
-                          "
-                          class="btn btn-primary btn-sm btn-update"
-                        >
-                          {{
-                            state?.data?.data?.user?.usingMfa
-                              ? "Disable"
-                              : "Enable"
-                          }}
-                          <span
-                            *ngIf="isLoading$ | async"
-                            class="spinner-border spinner-border-sm"
-                            role="status"
-                            aria-hidden="true"
-                            style="margin-right: 5px"
-                          ></span>
-                        </button>
-                      </div>
+                          " class="btn btn-primary btn-sm btn-update">
+                        {{
+                        state?.data?.data?.user?.usingMfa
+                        ? "Disable"
+                        : "Enable"
+                        }}
+                        <span *ngIf="isLoading$ | async" class="spinner-border spinner-border-sm" role="status"
+                          aria-hidden="true" style="margin-right: 5px"></span>
+                      </button>
                     </div>
                   </div>
-                  <div class="list-group-item">
-                    <div class="row align-items-center">
-                      <div class="col">
-                        <strong class="mb-2">Activity Logs</strong>
-                        <p class="text-muted mb-0">
-                          Show the latest activites on your account
-                        </p>
-                      </div>
-                      <div class="col-auto">
-                        <div class="custom-control custom-switch">
-                          <input
-                            type="checkbox"
-                            (change)="toggleLogs()"
-                            [disabled]="isLoading$ | async"
-                            [checked]="showLogs$ | async"
-                            class="custom-control-input"
-                            id="activityLog"
-                          />
-                          <span class="custom-control-label"></span>
-                        </div>
+                </div>
+                <div class="list-group-item">
+                  <div class="row align-items-center">
+                    <div class="col">
+                      <strong class="mb-2">Activity Logs</strong>
+                      <p class="text-muted mb-0">
+                        Show the latest activites on your account
+                      </p>
+                    </div>
+                    <div class="col-auto">
+                      <div class="custom-control custom-switch">
+                        <input type="checkbox" (change)="toggleLogs()" [disabled]="isLoading$ | async"
+                          class="custom-control-input" id="activityLog" />
+                        <span class="custom-control-label"></span>
                       </div>
                     </div>
                   </div>
@@ -502,36 +345,35 @@
               </div>
             </div>
           </div>
-          <div *ngIf="showLogs$ | async" class="row">
-            <div class="col-xl-12 mt-4">
-              <div class="card" style="border-radius: 8px">
-                <div class="card-body">
-                  <h5 class="card-title">Account Activities</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">
-                    Latest activities on your account.
-                  </h6>
-                  <table class="table table-hover">
-                    <thead>
-                      <tr>
-                        <th scope="col">Device</th>
-                        <th scope="col">IP Address</th>
-                        <th scope="col">Date</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let event of state?.data?.data?.events">
-                        <td>{{ event.device }}</td>
-                        <td>{{ event.ipAddress }}</td>
-                        <td>
-                          {{ event.createdAt | date : "MMMM d, y, h:mm a" }}
-                        </td>
-                        <td>
-                          <span
-                            class="badge pill"
-                            [ngClass]="[
+        </div>
+        <!-- <div *ngIf="showLogs$ | async" class="row">
+          <div class="col-xl-12 mt-4">
+            <div class="card" style="border-radius: 8px">
+              <div class="card-body">
+                <h5 class="card-title">Account Activities</h5>
+                <h6 class="card-subtitle mb-2 text-muted">
+                  Latest activities on your account.
+                </h6>
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th scope="col">Device</th>
+                      <th scope="col">IP Address</th>
+                      <th scope="col">Date</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Description</th>
+                      <th scope="col">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let event of state?.data?.data?.events">
+                      <td>{{ event.device }}</td>
+                      <td>{{ event.ipAddress }}</td>
+                      <td>
+                        {{ event.createdAt | date : "MMMM d, y, h:mm a" }}
+                      </td>
+                      <td>
+                        <span class="badge pill" [ngClass]="[
                               event.type === EventType.LOGIN_ATTEMPT_SUCCESS
                                 ? 'success'
                                 : '',
@@ -555,26 +397,23 @@
                                 ? 'warning'
                                 : '',
                               event.type === EventType.MFA_UPDATE ? 'info' : ''
-                            ]"
-                          >
-                            {{ event.type }}
-                          </span>
-                        </td>
-                        <td>{{ event.description }}</td>
-                        <td>
-                          <button type="button" class="btn btn-sm btn-report">
-                            Report
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                            ]">
+                          {{ event.type }}
+                        </span>
+                      </td>
+                      <td>{{ event.description }}</td>
+                      <td>
+                        <button type="button" class="btn btn-sm btn-report">
+                          Report
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
-          </div> -->
           </div>
-        </div>
+        </div> -->
       </div>
     </section>
   </ng-container>
@@ -582,5 +421,7 @@
 
 <!-- profile image change form -->
 <form enctype="multipart/form-data" style="display: none">
-  <input type="file" #fileInput name="image" id="image" placeholder="file" ngModel accept="image/*" />
+
+  <input type="file" #fileInput (change)="updatePicture($event)" name="image" id="image" placeholder="file" ngModel
+    accept="image/*" />
 </form>

@@ -1,0 +1,22 @@
+<div class="col-xm-12">
+  <table class="table table-hover">
+    <thead>
+    <tr>
+      <th class="text-center" scope="col">ID</th>
+      <th scope="col">Photo</th>
+      <th scope="col">Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Phone</th>
+      <th scope="col">Status</th>
+      <th scope="col">Type</th>
+      <th scope="col">Action</th>
+    </tr>
+    </thead>
+    <tbody class="table-body">
+    <app-customer-item *ngFor="let customer of customers"
+                       class="cell-1" [customer]="customer" style="display: contents; "></app-customer-item>
+
+    </tbody>
+  </table>
+
+</div>

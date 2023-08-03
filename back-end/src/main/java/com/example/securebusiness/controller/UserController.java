@@ -2,6 +2,7 @@ package com.example.securebusiness.controller;
 
 import com.example.securebusiness.dto.UserDTO;
 import com.example.securebusiness.exception.ApiException;
+import com.example.securebusiness.form.AccountSettingsForm;
 import com.example.securebusiness.form.LoginForm;
 import com.example.securebusiness.form.UpdatePasswordForm;
 import com.example.securebusiness.model.HttpResponse;
@@ -13,18 +14,23 @@ import com.example.securebusiness.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static java.time.LocalTime.now;
 import static java.util.Map.of;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -94,6 +100,59 @@ public class UserController {
                 .message("update user password")
                 .status(OK)
                 .build();
+    }
+
+    @PutMapping("updateUserRole")
+    public HttpResponse updateUserRole(@AuthenticationPrincipal User user, @RequestBody String roleName) {
+        return HttpResponse.builder()
+                .timeStamp(LocalDateTime.now().toString())
+                .data(of("user", userService.updateUserRole(user, roleName),
+                        "roles", roleService.getRoles()
+                ))
+                .message("updated user role")
+                .build();
+    }
+
+    @PutMapping("updateUserAccountSettings")
+    public HttpResponse updateAccountSettings(@AuthenticationPrincipal User user, @RequestBody AccountSettingsForm accountSettingsForm) {
+        return HttpResponse.builder()
+                .timeStamp(LocalDateTime.now().toString())
+                .data(of("user", userService.updateUserAccountSettings(user, accountSettingsForm),
+                        "roles", roleService.getRoles()
+                ))
+                .message("updated Account Settings")
+                .build();
+    }
+
+    @PutMapping("toggleMfa")
+    public HttpResponse toggleMfa(@AuthenticationPrincipal User user) {
+        return HttpResponse.builder()
+                .timeStamp(LocalDateTime.now().toString())
+                .data(of("user", userService.toggleMfa(user),
+                        "roles", roleService.getRoles()
+                ))
+                .message("updated Mfa")
+                .build();
+    }
+
+    @PutMapping("uploadImage")
+    public HttpResponse uploadProfileImage(@AuthenticationPrincipal User user, @RequestParam("image") MultipartFile multipartFile) throws IOException {
+
+        return HttpResponse.builder()
+                .timeStamp(LocalDateTime.now().toString())
+                .data(of("user", userService.updateProfileImage(user, multipartFile),
+                        "roles", roleService.getRoles()
+                ))
+                .message("upload profile image")
+                .build();
+    }
+
+    @GetMapping(value = "downloadImage/{imageUrl}", produces = IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> downloadProfileImage(@AuthenticationPrincipal User user, @PathVariable String imageUrl) throws IOException {
+
+        return ResponseEntity.status(OK)
+                .contentType(MediaType.valueOf("image/png"))
+                .body(userService.downloadImageProfile(user, imageUrl));
     }
 
     private UserDTO authenticate(String email, String password) {
