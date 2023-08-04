@@ -33,6 +33,18 @@ export class UserService {
       .pipe(tap(console.log), catchError(this.handleError));
   }
 
+  verifyCode$(
+    phoneNumber: string | undefined,
+    OTP: string
+  ): Observable<CustomHttpResponse<Profile>> {
+    return this.http
+      .post<CustomHttpResponse<Profile>>(`${this.apiUrl}/sms/verify`, {
+        phoneNumber,
+        OTP,
+      })
+      .pipe(tap(console.log), catchError(this.handleError));
+  }
+
   logOut() {
     localStorage.removeItem(Token.ACCESS_TOKEN);
     localStorage.removeItem(Token.REFRESH_TOKEN);
@@ -45,6 +57,7 @@ export class UserService {
       ? true
       : false;
   }
+
   profile$(): Observable<CustomHttpResponse<ResponseData>> {
     return this.http
       .get<CustomHttpResponse<ResponseData>>(`${this.apiUrl}/profile`)

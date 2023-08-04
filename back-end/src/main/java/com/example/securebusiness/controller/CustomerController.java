@@ -31,7 +31,7 @@ public class CustomerController {
                 .timeStamp(LocalDateTime.now().toString())
                 .message("Retrieving List of customers")
                 .data(of(
-                        "user", userService.getUserDto(user.getEmail()),
+                        "user", userService.getUserDtoByEmail(user.getEmail()),
                         "customers", customerService.getAllCustomers(),
                         "stats", customerService.getStats()))
                 .status(OK)
@@ -44,7 +44,7 @@ public class CustomerController {
                 .timeStamp(LocalDateTime.now().toString())
                 .message("Retrieving customer with id: " + id)
                 .data(of(
-                        "user", userService.getUserDto(user.getEmail()),
+                        "user", userService.getUserDtoByEmail(user.getEmail()),
                         "customer", customerService.getCustomer(id)))
                 .status(OK)
                 .build();
@@ -55,7 +55,7 @@ public class CustomerController {
         return HttpResponse.builder()
                 .timeStamp(LocalDateTime.now().toString())
                 .data(of(
-                        "user", userService.getUserDto(user.getEmail()),
+                        "user", userService.getUserDtoByEmail(user.getEmail()),
                         "customer", customerService.saveCustomer(customer)))
                 .message("Creating a customer")
                 .status(CREATED)
@@ -67,7 +67,7 @@ public class CustomerController {
         return HttpResponse.builder()
                 .timeStamp(LocalDateTime.now().toString())
                 .data(of(
-                        "user", userService.getUserDto(user.getEmail()),
+                        "user", userService.getUserDtoByEmail(user.getEmail()),
                         "customer", customerService.updateCustomer(customer, id)))
                 .message("Updating a customer")
                 .status(OK)
@@ -79,7 +79,7 @@ public class CustomerController {
         customerService.deleteCustomer(id);
         return HttpResponse.builder()
                 .timeStamp(LocalDateTime.now().toString())
-                .data(of("user", userService.getUserDto(user.getEmail())))
+                .data(of("user", userService.getUserDtoByEmail(user.getEmail())))
                 .message("deleting customer with id: " + id)
                 .status(OK)
                 .build();
@@ -91,7 +91,7 @@ public class CustomerController {
                 .timeStamp(LocalDateTime.now().toString())
                 .data(of(
                         "invoices", customerService.getInvoices(),
-                        "user", userService.getUserDto(user.getEmail())))
+                        "user", userService.getUserDtoByEmail(user.getEmail())))
                 .message("invoices retrieved")
                 .status(OK)
                 .build();
@@ -102,7 +102,7 @@ public class CustomerController {
         return HttpResponse.builder()
                 .timeStamp(LocalDateTime.now().toString())
                 .data(of("customers", customerService.getAllCustomers(),
-                        "user", userService.getUserDto(user.getEmail())))
+                        "user", userService.getUserDtoByEmail(user.getEmail())))
                 .message("customers retrieved")
                 .status(OK)
                 .build();
@@ -115,7 +115,7 @@ public class CustomerController {
         return HttpResponse.builder()
                 .timeStamp(LocalDateTime.now().toString())
                 .data(of("customers", customerService.getAllCustomers(),
-                        "user", userService.getUserDto(user.getEmail())))
+                        "user", userService.getUserDtoByEmail(user.getEmail())))
                 .message("invoice added to customer with id" + id)
                 .status(OK)
                 .build();
@@ -126,7 +126,7 @@ public class CustomerController {
         Invoice invoice = customerService.getInvoice(id);
         return HttpResponse.builder()
                 .timeStamp(LocalDateTime.now().toString())
-                .data(of("user", userService.getUserDto(user.getEmail()),
+                .data(of("user", userService.getUserDtoByEmail(user.getEmail()),
                         "customer", invoice.getCustomer(),
                         "invoice", invoice
                 ))

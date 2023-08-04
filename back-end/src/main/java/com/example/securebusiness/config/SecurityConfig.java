@@ -32,7 +32,6 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAuthorizationFilter customAuthorizationFilter;
-    private final UserDetailsService userDetailsService;
 
 
     @Bean
@@ -43,7 +42,7 @@ public class SecurityConfig {
                         .requestMatchers(PUBLIC_URLS).permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/users/**").hasAnyAuthority("DELETE:USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/customers/**").hasAnyAuthority("DELETE:CUSTOMER")
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling((exceptionHandling -> exceptionHandling

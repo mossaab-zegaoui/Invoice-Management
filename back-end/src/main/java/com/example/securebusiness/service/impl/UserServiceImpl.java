@@ -9,7 +9,6 @@ import com.example.securebusiness.model.User;
 import com.example.securebusiness.repository.RoleRepository;
 import com.example.securebusiness.repository.UserRepository;
 import com.example.securebusiness.service.UserService;
-import com.example.securebusiness.utils.FileStorageUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,8 +53,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getUserDto(String email) {
+    public UserDTO getUserDtoByEmail(String email) {
         return fromUser(userRepository.findByEmail(email).get());
+    }
+
+    @Override
+    public UserDTO getUserDtoByPhoneNumber(String phoneNumber) {
+        return fromUser(userRepository.findByPhone(phoneNumber).get());
     }
 
     @Override

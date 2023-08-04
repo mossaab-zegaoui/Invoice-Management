@@ -3,19 +3,19 @@ package com.example.securebusiness.service;
 import com.example.securebusiness.dto.UserDTO;
 import com.example.securebusiness.form.AccountSettingsForm;
 import com.example.securebusiness.form.UpdatePasswordForm;
-import com.example.securebusiness.model.Role;
 import com.example.securebusiness.model.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 public interface UserService {
     UserDTO createUser(User user);
 
     User getUserById(Long userId);
 
-    UserDTO getUserDto(String email);
+    UserDTO getUserDtoByEmail(String email);
+    UserDTO getUserDtoByPhoneNumber(String phoneNumber);
+
     User getUser(String email);
 
     UserDTO updateUserDetails(UserDTO userDto, Long id);
