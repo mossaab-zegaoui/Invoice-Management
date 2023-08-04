@@ -1,5 +1,6 @@
 package com.example.securebusiness.controller;
 
+import com.example.securebusiness.model.SmsRequest;
 import com.example.securebusiness.dto.UserDTO;
 import com.example.securebusiness.exception.ApiException;
 import com.example.securebusiness.form.AccountSettingsForm;
@@ -11,6 +12,7 @@ import com.example.securebusiness.model.UserPrincipal;
 import com.example.securebusiness.provider.TokenProvider;
 import com.example.securebusiness.service.RoleService;
 import com.example.securebusiness.service.UserService;
+import com.example.securebusiness.service.impl.SmsService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,6 +40,7 @@ import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 public class UserController {
     private final UserService userService;
     private final RoleService roleService;
+    private final SmsService smsService;
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
 
@@ -55,22 +58,16 @@ public class UserController {
     @PostMapping("login")
     public HttpResponse login(@RequestBody @Valid LoginForm loginForm) {
         UserDTO userDTO = authenticate(loginForm.getEmail(), loginForm.getPassword());
-        return
-                HttpResponse.builder()
-                        .timeStamp(LocalDateTime.now().toString())
-                        .data(of("user", userDTO,
-                                "access_token", tokenProvider.createAccessToken(getUserPrincipal(userDTO)),
-                                "refresh_token", tokenProvider.createRefreshToken(getUserPrincipal(userDTO))))
-                        .message("Login successful")
-                        .status(OK)
-                        .build();
+        return userDTO.isUsingMfa() ? sendVerificationCode(userDTO) : sendResponse(userDTO);
+
     }
+
 
     @GetMapping("profile")
     public HttpResponse profile(@AuthenticationPrincipal User user) {
         return HttpResponse.builder()
                 .timeStamp(LocalDateTime.now().toString())
-                .data(of("user", userService.getUserDto(user.getEmail()),
+                .data(of("user", userService.getUserDtoByEmail(user.getEmail()),
                         "roles", roleService.getRoles()
                 ))
                 .message("profile retrieved")
@@ -155,14 +152,41 @@ public class UserController {
                 .body(userService.downloadImageProfile(user, imageUrl));
     }
 
+
+    @PostMapping("sms/verify")
+    public HttpResponse verifyCode(@RequestBody @Valid SmsRequest smsRequest) {
+        smsService.validateOtp(smsRequest);
+        return sendResponse(userService.getUserDtoByPhoneNumber(smsRequest.getPhoneNumber()));
+    }
+
+    private HttpResponse sendVerificationCode(UserDTO userDTO) {
+        smsService.sendSms(new SmsRequest(userDTO.getPhone(), null));
+        return HttpResponse.builder()
+                .timeStamp(LocalDateTime.now().toString())
+                .data(of("user", userDTO))
+                .message("verification code has been sent your phone")
+                .status(OK)
+                .build();
+    }
+
     private UserDTO authenticate(String email, String password) {
         try {
             Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-
             return getLoggedInUser(authenticate);
         } catch (AuthenticationException exception) {
             throw new ApiException("Wrong credentials");
         }
+    }
+
+    private HttpResponse sendResponse(UserDTO userDTO) {
+        return HttpResponse.builder()
+                .timeStamp(LocalDateTime.now().toString())
+                .data(of("user", userDTO,
+                        "access_token", tokenProvider.createAccessToken(getUserPrincipal(userDTO)),
+                        "refresh_token", tokenProvider.createRefreshToken(getUserPrincipal(userDTO))))
+                .message("Login successful")
+                .status(OK)
+                .build();
     }
 
     public static UserDTO getLoggedInUser(Authentication authentication) {

@@ -1,5 +1,5 @@
 <section *ngIf="loginState$ | async as state" [ngSwitch]="state.dataState">
-    <div *ngIf="!state.loginSuccess">
+    <div *ngIf="!state.loginSuccess && !state.usingMfa">
         <div class="row justify-content-center my-5">
             <div class="col-md-5" style="margin-top: 50px">
                 <div class="card">
@@ -60,16 +60,14 @@
             </div>
         </div>
     </div>
-
-    <!-- <div *ngIf="!state.isUsingMfa" class="container">
+    <div *ngIf="state.usingMfa" class="container">
         <div class="row justify-content-center my-5">
             <div class="col-md-6" style="margin-top: 50px">
                 <div class="card">
                     <div class="card-body">
                         <div class="text-center">
                             <h2>
-                                <i style="margin-right: 5px" class="bi bi-safe"></i>Invoice
-                                Management
+                                <i style="margin-right: 5px" class="bi bi-safe"></i>Gestion des factures
                             </h2>
                             <h5 class="card-title mt-4 mb-4">
                                 Verification Code Sent To ...{{ state.phone }}
@@ -118,5 +116,5 @@
                 </div>
             </div>
         </div>
-    </div> -->
+    </div>
 </section>

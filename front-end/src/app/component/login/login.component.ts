@@ -1,10 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable, catchError, map, of, startWith } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  catchError,
+  map,
+  of,
+  startWith,
+} from 'rxjs';
 import { DataState } from 'src/app/enum/dataState.enum';
 import { Token } from 'src/app/enum/token.enum';
 import { LoginState } from 'src/app/interface/appstates';
+import { SmsRequest } from 'src/app/interface/smsRequest';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -17,6 +25,9 @@ export class LoginComponent implements OnInit {
   loginState$: Observable<LoginState> = of({
     dataState: DataState.LOADED,
   });
+  phoneSubject = new BehaviorSubject<string | undefined>('');
+  isLoadingSubject = new BehaviorSubject<boolean>(false);
+  isLoading$ = this.isLoadingSubject.asObservable();
 
   constructor(private userService: UserService, private router: Router) {}
   ngOnInit(): void {
@@ -29,14 +40,27 @@ export class LoginComponent implements OnInit {
       .login$(loginForm.value.email, loginForm.value.password)
       .pipe(
         map((response) => {
-          loginForm.reset();
-          localStorage.setItem(Token.ACCESS_TOKEN, response.data!.access_token);
-          localStorage.setItem(
-            Token.REFRESH_TOKEN,
-            response.data!.refresh_token
-          );
-          this.router.navigate(['/']);
-          return { dataState: DataState.LOADED, loginSuccess: true };
+          if (response.data?.user.usingMfa) {
+            this.phoneSubject.next(response.data.user.phone);
+            return {
+              dataState: DataState.LOADED,
+              loginSuccess: false,
+              usingMfa: true,
+              phone: this.phoneSubject.value,
+            };
+          } else {
+            loginForm.reset();
+            localStorage.setItem(
+              Token.ACCESS_TOKEN,
+              response.data!.access_token
+            );
+            localStorage.setItem(
+              Token.REFRESH_TOKEN,
+              response.data!.refresh_token
+            );
+            this.router.navigate(['/']);
+            return { dataState: DataState.LOADED, loginSuccess: true };
+          }
         }),
         startWith({ dataState: DataState.LOADING, loginSuccess: false }),
         catchError((err) =>
@@ -48,7 +72,43 @@ export class LoginComponent implements OnInit {
         )
       );
   }
-  verifyCode(verifyCodeForm: NgForm) {}
+  verifyCode(verifyCodeForm: NgForm) {
+    this.isLoadingSubject.next(true);
+    this.loginState$ = this.userService
+      .verifyCode$(this.phoneSubject.value, verifyCodeForm.value.code)
+      .pipe(
+        map((response) => {
+          this.isLoadingSubject.next(false);
+          localStorage.setItem(Token.ACCESS_TOKEN, response.data!.access_token);
+          localStorage.setItem(
+            Token.REFRESH_TOKEN,
+            response.data!.refresh_token
+          );
+          this.router.navigate(['/']);
+          return {
+            dataState: DataState.LOADED,
+            data: response,
+            loginSuccess: true,
+          };
+        }),
+        startWith({
+          dataState: DataState.LOADING,
+          loginSuccess: false,
+          usingMfa: true,
+          phone: this.phoneSubject.value,
+        }),
+        catchError((error) => {
+          return of({
+            dataState: DataState.ERROR,
+            loginSuccess: false,
+            usingMfa: true,
+            phone: this.phoneSubject.value,
+            error,
+
+          });
+        })
+      );
+  }
 
   loginPage() {
     return of({ dataState: DataState.LOADED, loginSuccess: false });

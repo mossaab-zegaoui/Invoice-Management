@@ -16,8 +16,8 @@ export interface LoginState {
   loginSuccess?: boolean;
   message?: string;
   error?: string;
-  isUsingMfa?: boolean;
-  phone?: boolean;
+  usingMfa?: boolean;
+  phone?: string | undefined;
 }
 export interface Profile {
   user: User;
