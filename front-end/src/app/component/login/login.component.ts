@@ -104,7 +104,6 @@ export class LoginComponent implements OnInit {
             usingMfa: true,
             phone: this.phoneSubject.value,
             error,
-
           });
         })
       );

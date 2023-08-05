@@ -32,7 +32,7 @@
                                 </tr>
                             </thead>
                             <tbody class="table-body">
-                                <tr *ngFor="let invoice of state?.data?.data?.invoices" class="cell-1">
+                                <tr *ngFor="let invoice of state?.data?.data?.invoices?.content" class="cell-1">
                                     <td>{{ invoice.invoiceNumber }}</td>
                                     <td>{{ invoice.services }}</td>
                                     <td>
@@ -59,27 +59,28 @@
                                 </tr>
                             </tbody>
                         </table>
-
-                        <nav aria-label="Page navigation example">
+                        <nav aria-label="Page navigation">
                             <ul class="pagination justify-content-end">
-                                <li class="page-item pointer">
-                                    <a class="page-link">&laquo; Prev</a>
+                                <li class="page-item" [ngClass]="(currentPage$ | async)=== 0?' disabled':'' ">
+
+                                    <a class="page-link pointer" (click)="goToNextOrPreviousPage('backward')"
+                                        tabindex="-1">Previous</a>
                                 </li>
-                                <li *ngFor="
-                    let pageNumber of [].constructor(
-                    );
-                    let i = index
-                  " class="page-item pointer">
-                                    <a [ngClass]="
-                    " class="page-link">
-                                        {{ i + 1 }}
+                                <li class="page-item pointer "
+                                    *ngFor="let pageNumber of state.data?.data?.invoices?.totalPages | extractArrayValue :'number'">
+                                    <a class="page-link"
+                                        [ngClass]="(currentPage$ | async) === pageNumber ? '  active':''"
+                                        (click)="goToPage(pageNumber)">
+                                        {{pageNumber + 1}}
                                     </a>
-                                </li>
-                                <li class="page-item pointer">
-                                    <a (click)="goToNextOrPreviousPage('forward')" class="page-link">Next &raquo;</a>
+                                <li class="page-item pointer"
+                                    [ngClass]="state.data?.data?.invoices?.totalPages! -1 === (currentPage$ | async)?' disabled':'' ">
+
+                                    <a class="page-link " (click)="goToNextOrPreviousPage('forward')">Next</a>
                                 </li>
                             </ul>
                         </nav>
+
                     </div>
                 </div>
             </div>

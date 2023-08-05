@@ -8,6 +8,7 @@ import com.example.securebusiness.service.CustomerService;
 import com.example.securebusiness.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,14 +26,16 @@ public class CustomerController {
     private final UserService userService;
 
     @GetMapping
-    public HttpResponse getAllCustomers(@AuthenticationPrincipal User user) {
-
+    public HttpResponse getAllCustomers(@AuthenticationPrincipal User user,
+                                        @RequestParam(defaultValue = "0") int pageNo,
+                                        @RequestParam(defaultValue = "10") int pageSize,
+                                        @RequestParam(required = false, defaultValue = "") String name) {
+        Page<Customer> customers = customerService.filterCustomers(pageNo, pageSize, name);
         return HttpResponse.builder()
                 .timeStamp(LocalDateTime.now().toString())
                 .message("Retrieving List of customers")
-                .data(of(
-                        "user", userService.getUserDtoByEmail(user.getEmail()),
-                        "customers", customerService.getAllCustomers(),
+                .data(of("user", userService.getUserDtoByEmail(user.getEmail()),
+                        "customers", customers,
                         "stats", customerService.getStats()))
                 .status(OK)
                 .build();
@@ -86,11 +89,13 @@ public class CustomerController {
     }
 
     @GetMapping("invoices")
-    public HttpResponse getInvoices(@AuthenticationPrincipal User user) {
+    public HttpResponse getInvoices(@AuthenticationPrincipal User user,
+                                    @RequestParam(defaultValue = "0") int pageNo,
+                                    @RequestParam(defaultValue = "10") int pageSize) {
         return HttpResponse.builder()
                 .timeStamp(LocalDateTime.now().toString())
                 .data(of(
-                        "invoices", customerService.getInvoices(),
+                        "invoices", customerService.getInvoices(pageNo, pageSize),
                         "user", userService.getUserDtoByEmail(user.getEmail())))
                 .message("invoices retrieved")
                 .status(OK)

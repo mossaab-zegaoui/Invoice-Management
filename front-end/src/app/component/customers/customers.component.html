@@ -1,8 +1,8 @@
-<ng-container
-  *ngIf="customers$ | async as state"
-  [ngSwitch]="state.dataState"
->
-  <ng-container *ngSwitchCase="DataState.LOADED">
+<ng-container *ngIf="customers$ | async as state" [ngSwitch]="state.dataState">
+  <ng-container *ngSwitchCase="DataState.ERROR">
+    <div>{{ state.error }}</div>
+  </ng-container>
+  <ng-container>
     <app-navbar [user]="state?.data?.data?.user"></app-navbar>
     <section>
       <div class="container">
@@ -18,49 +18,51 @@
           <div class="col">
             <h4 class="fw-bold text-start">Customers</h4>
           </div>
-          <div class="col">
-            <h4 class="fw-bold text-end">
-              <i
-                style="cursor: pointer; color: green; font-size: 30px"
-                class="bi bi-file-earmark-excel"
-              ></i>
-            </h4>
-          </div>
           <div class="col-xm-12">
-            <form
-              #searchForm="ngForm"
-              (ngSubmit)="searchCustomers(searchForm)"
-              class="row g-3 float-end"
-            >
-              <div class="col-auto">
-                <label class="visually-hidden"></label>
-                <input
-                  type="text"
-                  ngModel
-                  name="name"
-                  #name
-                  class="form-control"
-                  placeholder="Customer Name"
-                />
+            <form #searchForm="ngForm" (ngSubmit)="searchCustomers(searchForm)" class="row g-3 float-end">
+              <div class="col">
+                <h4 class="fw-bold text-end">
+                  <i style="cursor: pointer; color: green; font-size: 30px" class="bi bi-file-earmark-excel"
+                    (click)="clearSearchForm(searchForm)"></i>
+                </h4>
               </div>
               <div class="col-auto">
-                <button type="submit" class="btn mb-3 btn-search">
+                <label class="visually-hidden"></label>
+                <input type="text" ngModel name="name" #name class="form-control" placeholder="Customer Name" />
+              </div>
+              <div class="col-auto">
+                <button type="submit" class="btn mb-3 btn-search btn btn-outline-success">
                   Search
                 </button>
               </div>
             </form>
           </div>
-          <app-customer-list [customers]="state.data?.data?.customers"></app-customer-list>
+          <ng-container *ngIf="state.data?.data?.customers?.content!.length > 0">
+            <app-customer-list [customers]="state.data?.data?.customers?.content"></app-customer-list>
+            <nav aria-label="Page navigation">
+              <ul class="pagination justify-content-end">
+                <li class="page-item" [ngClass]="state.data?.data?.customers?.number === 0?'disabled':'' ">
+                  <a class="page-link pointer" (click)="goToNextOrPreviousPage('backward')" tabindex="-1">Previous</a>
+                </li>
+                <li class="page-item pointer "
+                  *ngFor="let pageNumber of state.data?.data?.customers?.totalPages | extractArrayValue :'number'">
+                  <a class="page-link" [ngClass]="(currentPage$ | async) === pageNumber ? ' active':''"
+                    (click)="goToPage(pageNumber)">
+                    {{pageNumber + 1}}
+                  </a>
+                <li class="page-item pointer"
+                  [ngClass]="state.data?.data?.customers?.totalPages! -1 ===(currentPage$| async)?'disabled':'' ">
+                  <a class="page-link " (click)="goToNextOrPreviousPage('forward')">Next</a>
+                </li>
+              </ul>
+            </nav>
+          </ng-container>
+          <ng-container *ngIf="state.data?.data?.customers?.content!.length === 0">
+            0 Result found
+          </ng-container>
         </div>
       </div>
     </section>
   </ng-container>
 
-  <ng-container *ngSwitchCase="DataState.LOADING">
-    <div>Loading...</div>
-  </ng-container>
-
-  <ng-container *ngSwitchCase="DataState.ERROR">
-    <div>{{ state.error }}</div>
-  </ng-container>
 </ng-container>

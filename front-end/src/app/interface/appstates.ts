@@ -17,7 +17,7 @@ export interface LoginState {
   message?: string;
   error?: string;
   usingMfa?: boolean;
-  phone?: string | undefined;
+  phone?: string;
 }
 export interface Profile {
   user: User;
@@ -33,4 +33,18 @@ export interface ResponseData {
   invoices?: Invoice[];
   invoice?: Invoice;
   roles?: Role[];
+}
+
+export interface ApiResponse<T> {
+  customers: Page<T>;
+  invoices: Page<T>;
+  user?: User;
+  stats?: Stats;
+}
+export interface Page<T> {
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number;
+  content: T;
 }

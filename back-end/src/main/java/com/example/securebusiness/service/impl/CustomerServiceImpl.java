@@ -10,6 +10,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 import com.example.securebusiness.service.CustomerService;
 import com.example.securebusiness.repository.InvoiceRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,6 +29,24 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
+    }
+
+    @Override
+    public Page<Customer> geCustomers(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Customer> pagedCustomers = customerRepository.findAll(pageable);
+        if (pagedCustomers.isEmpty())
+            return Page.empty(pageable);
+        return pagedCustomers;
+    }
+
+    @Override
+    public Page<Customer> filterCustomers(int pageNo, int pageSize, String name) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Customer> customers = customerRepository.findByNameContaining(name, pageable);
+        if (customers.isEmpty())
+            return Page.empty(pageable);
+        return customers;
     }
 
     @Override
@@ -83,8 +105,19 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Page<Invoice> getInvoices(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Invoice> invoices = invoiceRepository.findAll(pageable);
+        if (invoices.isEmpty())
+            return Page.empty(pageable);
+        return invoices;
+    }
+
+    @Override
     public Invoice getInvoice(String id) {
         return invoiceRepository.findById(id)
                 .orElseThrow(() -> new ApiException("invoice wit id: " + id + " not found"));
     }
+
+
 }
