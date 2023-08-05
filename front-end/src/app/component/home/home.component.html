@@ -1,8 +1,7 @@
-
 <ng-container *ngIf="homeState$ | async as state">
   <ng-container>
     <app-navbar [user]="state.data?.data?.user"></app-navbar>
-    <app-stats [stats]="state.data?.data?.stats" ></app-stats>
+    <app-stats [stats]="state.data?.data?.stats"></app-stats>
     <section>
       <div class="container">
         <div class="row mt-3">
@@ -11,108 +10,71 @@
         <div class="col">
           <h4 class="fw-bold text-start">Customers</h4>
         </div>
-        <div class="col">
-          <h4 (click)="report()" class="fw-bold text-end">
-            <i
-              style="cursor: pointer; color: #1d6f42; font-size: 30px"
-              class="bi bi-file-earmark-excel"
-            ></i>
-          </h4>
-        </div>
-        <div class="col-xm-12">
+       
+        <div class="col-xm-12 mt-3">
           <table class="table table-hover">
             <thead>
-            <tr>
-              <th class="text-center" scope="col">ID</th>
-              <th scope="col">Photo</th>
-              <th scope="col">Name</th>
-              <th scope="col">Email</th>
-              <th scope="col">Phone</th>
-              <th scope="col">Status</th>
-              <th scope="col">Type</th>
-              <th scope="col">Action</th>
-            </tr>
+              <tr>
+                <th class="text-center" scope="col">ID</th>
+                <th scope="col">Photo</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Status</th>
+                <th scope="col">Type</th>
+                <th scope="col">Action</th>
+              </tr>
             </thead>
-            <tbody class="table-body">
-            <tr
-              *ngFor="let customer of state?.data?.data?.customers"
-              class="cell-1"
-            >
-              <th class="text-center">{{ customer.id }}</th>
-              <td>
-                <img
-                  [src]="customer.imageUrl"
-                  width="42"
-                  height="42"
-                  class="rounded-circle"
-                  [alt]="customer.name"
-                />
-              </td>
-              <td>{{ customer.name }}</td>
-              <td>{{ customer.email }}</td>
-              <td>{{ customer.phone }}</td>
-              <td>
-                    <span
-                      class="badge rounded-pill "
-                      [ngClass]="[
+            <tbody class="table-body" *ngIf="state?.data?.data">
+              <tr *ngFor="let customer of state?.data?.data?.customers?.content" class="cell-1">
+                <th class="text-center">{{ customer.id }}</th>
+                <td>
+                  <img [src]="customer.imageUrl" width="42" height="42" class="rounded-circle" [alt]="customer.name" />
+                </td>
+                <td>{{ customer.name }}</td>
+                <td>{{ customer.email }}</td>
+                <td>{{ customer.phone }}</td>
+                <td>
+                  <span class="badge rounded-pill " [ngClass]="[
                         customer.status === 'ACTIVE' ? 'bg-success' : '',
                         customer.status === 'PENDING' ? 'bg-primary' : '',
                         customer.status === 'BANNED' ? 'bg-danger' : '',
                         customer.status === 'INACTIVE' ? 'bg-info' : ''
-                      ]"
-                    >
-                      {{ customer.status }}
-                    </span>
-              </td>
-              <td>{{ customer.type }}</td>
-              <td>
-                <button
-                  type="button"
-                  (click)="selectCustomer(customer)"
-                  class="btn btn-info"
-                >
-                  View
-                </button>
-              </td>
-            </tr>
+                      ]">
+                    {{ customer.status }}
+                  </span>
+                </td>
+                <td>{{ customer.type }}</td>
+                <td>
+                  <button type="button" (click)="selectCustomer(customer)" class="btn btn-info">
+                    View
+                  </button>
+                </td>
+              </tr>
             </tbody>
           </table>
-
-          <nav
-            *ngIf="state?.data?.data?.customers!.length> 0"
-            aria-label="Page navigation example"
-          >
-            <ul class="pagination justify-content-end">
-              <li
-                class="page-item pointer"
-              >
-                <a
-                  class="page-link"
-                >&laquo; Prev</a
-                >
-              </li>
-              <li
-                class="page-item pointer"
-              >
-                <a
-                  class="page-link"
-                >
-                </a>
-              </li>
-              <li
-
-                class="page-item pointer"
-              >
-                <a
-                  (click)="goToNextOrPreviousPage('forward')"
-                  class="page-link"
-                >Next &raquo;</a
-                >
-              </li>
-            </ul>
-          </nav>
         </div>
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-end">
+            <li class="page-item" [ngClass]="(currentPage$ | async)=== 0?' disabled':'' ">
+
+              <a class="page-link pointer" (click)="goToNextOrPreviousPage('backward')" tabindex="-1">Previous</a>
+            </li>
+            <li class="page-item pointer "
+              *ngFor="let pageNumber of state.data?.data?.customers?.totalPages | extractArrayValue :'number'">
+              <a class="page-link" [ngClass]="(currentPage$ | async) === pageNumber ? ' active':''"
+                (click)="goToPage(pageNumber)">
+                {{pageNumber + 1}}
+              </a>
+            <li class="page-item pointer"
+              [ngClass]="state.data?.data?.customers?.totalPages! -1 === (currentPage$ | async)?' disabled':'' ">
+
+              <a class="page-link " (click)="goToNextOrPreviousPage('forward')">Next</a>
+            </li>
+          </ul>
+        </nav>
       </div>
+
     </section>
   </ng-container>
 </ng-container>

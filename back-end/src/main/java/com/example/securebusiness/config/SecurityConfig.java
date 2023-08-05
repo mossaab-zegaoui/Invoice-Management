@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .requestMatchers(PUBLIC_URLS).permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/users/**").hasAnyAuthority("DELETE:USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/customers/**").hasAnyAuthority("DELETE:CUSTOMER")
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling((exceptionHandling -> exceptionHandling
