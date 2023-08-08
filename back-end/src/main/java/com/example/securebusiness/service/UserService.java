@@ -31,4 +31,6 @@ public interface UserService {
     UserDTO updateProfileImage(User user, MultipartFile multipartFile) throws IOException;
 
     byte[] downloadImageProfile(User user, String imageUrl) throws IOException;
+
+    void createPasswordResetToken(User user, String token);
 }

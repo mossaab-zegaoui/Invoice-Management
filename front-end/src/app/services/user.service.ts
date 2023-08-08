@@ -7,6 +7,7 @@ import { Token } from '../enum/token.enum';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { CustomHttpResponse } from '../interface/customHttpResponse';
 import { ResolveData } from '@angular/router';
+import { NgForm } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
@@ -44,7 +45,28 @@ export class UserService {
       })
       .pipe(tap(console.log), catchError(this.handleError));
   }
+  resetPassword$(email: string): Observable<CustomHttpResponse<any>> {
+    return this.http
+      .get<CustomHttpResponse<any>>(
+        `${this.apiUrl}/reset-password?email=${email}`
+      )
+      .pipe(tap(console.log), catchError(this.handleError));
+  }
+  validateResetPassword$(token: string): Observable<CustomHttpResponse<any>> {
+    return this.http
+      .get<CustomHttpResponse<any>>(
+        `${this.apiUrl}/reset-password/validate?token=${token}`
+      )
+      .pipe(tap(console.log), catchError(this.handleError));
+  }
+  updatePasswod$(
+    form: NgForm,
 
+  ): Observable<CustomHttpResponse<any>> {
+    return this.http
+      .post<CustomHttpResponse<any>>(`${this.apiUrl}/update-password`, form)
+      .pipe(tap(console.log), catchError(this.handleError));
+  }
   logOut() {
     localStorage.removeItem(Token.ACCESS_TOKEN);
     localStorage.removeItem(Token.REFRESH_TOKEN);

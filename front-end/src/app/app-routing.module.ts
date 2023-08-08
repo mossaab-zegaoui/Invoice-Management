@@ -8,12 +8,20 @@ import { NewCustomerComponent } from './component/customers/new-customer/new-cus
 import { NewInvoiceComponent } from './component/invoices/new-invoice/new-invoice.component';
 import { InvoicesComponent } from './component/invoices/invoices.component';
 import { ProfileComponent } from './component/profile/profile.component';
-import {CustomersComponent} from "./component/customers/customers.component";
-import {EditCustomerComponent} from "./component/customers/edit-customer/edit-customer.component";
+import { CustomersComponent } from './component/customers/customers.component';
+import { EditCustomerComponent } from './component/customers/edit-customer/edit-customer.component';
+import { InvoiceComponent } from './component/invoice/invoice.component';
+import { ResetPasswordComponent } from './component/reset-password/reset-password.component';
+import { UpdatePasswordComponent } from './component/update-password/update-password.component';
 
 const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
+  {
+    path: 'reset-password/validate',
+    component: UpdatePasswordComponent,
+  },
+  { path: 'reset-password', component: ResetPasswordComponent },
   {
     path: 'home',
     component: HomeComponent,
@@ -32,6 +40,11 @@ const routes: Routes = [
   {
     path: 'invoices',
     component: InvoicesComponent,
+    canActivate: [AuthenticationGuard],
+  },
+  {
+    path: 'invoices/:id/:invoiceNumber',
+    component: InvoiceComponent,
     canActivate: [AuthenticationGuard],
   },
   {

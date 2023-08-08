@@ -102,6 +102,20 @@ public class CustomerController {
                 .build();
     }
 
+    @GetMapping("invoices/{id}")
+    public HttpResponse getInvoice(@AuthenticationPrincipal User user, @PathVariable String id) {
+        Invoice invoice = customerService.getInvoice(id);
+        return HttpResponse.builder()
+                .timeStamp(LocalDateTime.now().toString())
+                .data(of("user", userService.getUserDtoByEmail(user.getEmail()),
+                        "customer", invoice.getCustomer(),
+                        "invoice", invoice
+                ))
+                .message("invoice " + id + " retrieved")
+                .status(OK)
+                .build();
+    }
+
     @GetMapping("invoices/new")
     public HttpResponse newInvoice(@AuthenticationPrincipal User user) {
         return HttpResponse.builder()
@@ -126,18 +140,5 @@ public class CustomerController {
                 .build();
     }
 
-    @GetMapping("invoices/{id}")
-    public HttpResponse getInvoice(@AuthenticationPrincipal User user, @PathVariable String id) {
-        Invoice invoice = customerService.getInvoice(id);
-        return HttpResponse.builder()
-                .timeStamp(LocalDateTime.now().toString())
-                .data(of("user", userService.getUserDtoByEmail(user.getEmail()),
-                        "customer", invoice.getCustomer(),
-                        "invoice", invoice
-                ))
-                .message("invoice " + id + " retrieved")
-                .status(OK)
-                .build();
-    }
 
 }

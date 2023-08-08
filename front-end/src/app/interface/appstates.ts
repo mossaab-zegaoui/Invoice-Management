@@ -19,6 +19,13 @@ export interface LoginState {
   usingMfa?: boolean;
   phone?: string;
 }
+export interface updatePasswordState {
+  dataState: DataState;
+  resetPasswordSuccess: boolean;
+  updatePasswordSuccess?: boolean;
+  message?: string;
+  error?: string;
+}
 export interface Profile {
   user: User;
   access_token: string;

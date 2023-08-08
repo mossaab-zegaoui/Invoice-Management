@@ -4,8 +4,10 @@ import com.example.securebusiness.dto.UserDTO;
 import com.example.securebusiness.exception.ApiException;
 import com.example.securebusiness.form.AccountSettingsForm;
 import com.example.securebusiness.form.UpdatePasswordForm;
+import com.example.securebusiness.model.PasswordResetToken;
 import com.example.securebusiness.model.Role;
 import com.example.securebusiness.model.User;
+import com.example.securebusiness.repository.PasswordResetTokenRepository;
 import com.example.securebusiness.repository.RoleRepository;
 import com.example.securebusiness.repository.UserRepository;
 import com.example.securebusiness.service.UserService;
@@ -23,6 +25,7 @@ import java.time.LocalDateTime;
 import static com.example.securebusiness.enums.RoleType.ROLE_USER;
 import static com.example.securebusiness.mapper.UserDTOMapper.fromUser;
 import static com.example.securebusiness.utils.FileStorageUtils.FOLDER_PATH;
+import static com.example.securebusiness.utils.SecurityConstant.RESET_PASSWORD_TOKEN_EXPIRATION_TIME_DAY;
 
 @Service
 @AllArgsConstructor
@@ -30,6 +33,7 @@ import static com.example.securebusiness.utils.FileStorageUtils.FOLDER_PATH;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -65,7 +69,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUser(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ApiException("user with email: " + email + " not found"));
+                .orElseThrow(() -> new ApiException("email: " + email + " not found"));
     }
 
     @Override
@@ -133,6 +137,18 @@ public class UserServiceImpl implements UserService {
         String filePath = FOLDER_PATH + imageUrl;
         byte[] image = Files.readAllBytes(new File(filePath).toPath());
         return image;
+    }
+
+    @Override
+    public void createPasswordResetToken(User user, String token) {
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository
+                .findByUser(user)
+                .orElseGet(PasswordResetToken::new);
+        passwordResetToken.setUser(user);
+        passwordResetToken.setToken(token);
+        passwordResetToken.setExpirationDate(LocalDateTime.now().plusDays(RESET_PASSWORD_TOKEN_EXPIRATION_TIME_DAY));
+
+        passwordResetTokenRepository.save(passwordResetToken);
     }
 
     private boolean checkIfValidOldPassword(final String password, final String currentPassword) {

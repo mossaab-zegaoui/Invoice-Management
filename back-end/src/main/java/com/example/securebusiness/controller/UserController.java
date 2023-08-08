@@ -1,5 +1,6 @@
 package com.example.securebusiness.controller;
 
+import com.example.securebusiness.form.PasswordDto;
 import com.example.securebusiness.model.SmsRequest;
 import com.example.securebusiness.dto.UserDTO;
 import com.example.securebusiness.exception.ApiException;
@@ -10,10 +11,15 @@ import com.example.securebusiness.model.HttpResponse;
 import com.example.securebusiness.model.User;
 import com.example.securebusiness.model.UserPrincipal;
 import com.example.securebusiness.provider.TokenProvider;
+import com.example.securebusiness.service.EmailService;
+import com.example.securebusiness.service.PasswordResetService;
 import com.example.securebusiness.service.RoleService;
 import com.example.securebusiness.service.UserService;
 import com.example.securebusiness.service.impl.SmsService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static java.time.LocalTime.now;
 import static java.util.Map.of;
@@ -43,6 +50,7 @@ public class UserController {
     private final SmsService smsService;
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
+    private final PasswordResetService passwordResetService;
 
     @PostMapping("register")
     public HttpResponse register(@RequestBody @Valid User user) {
@@ -159,6 +167,34 @@ public class UserController {
         return sendResponse(userService.getUserDtoByPhoneNumber(smsRequest.getPhoneNumber()));
     }
 
+    @GetMapping("reset-password")
+    public HttpResponse resetPassword(HttpServletRequest request, @RequestParam("email") @NotBlank String email) {
+        passwordResetService.resetPassword(email, request);
+        return HttpResponse.builder()
+                .timeStamp(LocalDateTime.now().toString())
+                .message("verification link has been sent to your email")
+                .status(OK)
+                .build();
+    }
+    @GetMapping("reset-password/validate")
+    public HttpResponse validateResetPassword(@RequestParam @NotBlank String token) {
+        passwordResetService.validateResetPassword(token);
+        return HttpResponse.builder()
+                .timeStamp(LocalDateTime.now().toString())
+                .message("reset password token is valid")
+                .status(OK)
+                .build();
+    }
+
+    @PostMapping("update-password")
+    public HttpResponse updatePassword(@RequestBody @Valid PasswordDto passwordDto) {
+        passwordResetService.updatePassword(passwordDto);
+        return HttpResponse.builder()
+                .timeStamp(LocalDateTime.now().toString())
+                .message("password has been updated successfully")
+                .status(OK)
+                .build();
+    }
     private HttpResponse sendVerificationCode(UserDTO userDTO) {
         smsService.sendSms(new SmsRequest(userDTO.getPhone(), null));
         return HttpResponse.builder()
