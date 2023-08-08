@@ -21,6 +21,9 @@ import { EditCustomerComponent } from './component/customers/edit-customer/edit-
 import { CustomerListComponent } from './component/customers/customer-list/customer-list.component';
 import { CustomerItemComponent } from './component/customers/customer-list/customer-item/customer-item.component';
 import { ExtractArrayValuePipe } from './pipes/extract-array-value.pipe';
+import { InvoiceComponent } from './component/invoice/invoice.component';
+import { ResetPasswordComponent } from './component/reset-password/reset-password.component';
+import { UpdatePasswordComponent } from './component/update-password/update-password.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +42,9 @@ import { ExtractArrayValuePipe } from './pipes/extract-array-value.pipe';
     CustomerListComponent,
     CustomerItemComponent,
     ExtractArrayValuePipe,
+    InvoiceComponent,
+    ResetPasswordComponent,
+    UpdatePasswordComponent,
   ],
   imports: [CommonModule, BrowserModule, AppRoutingModule, HttpClientModule, FormsModule, ReactiveFormsModule],
   providers: [
