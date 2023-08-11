@@ -5,7 +5,7 @@ import { Invoice } from './invoice';
 import { Stats } from './stats';
 import { User } from './user';
 
-export interface RegisterState {
+export interface RegisterAndResetState {
   dataState: DataState;
   registerSuccess?: boolean;
   message?: string;
@@ -28,6 +28,7 @@ export interface updatePasswordState {
 }
 export interface Profile {
   user: User;
+  roles?: Role[];
   access_token: string;
   refresh_token: string;
 }
@@ -43,11 +44,11 @@ export interface ResponseData {
 }
 
 export interface ApiResponse<T> {
-  customers: Page<T>;
-  invoices: Page<T>;
+  page: Page<T>;
   user?: User;
   stats?: Stats;
 }
+
 export interface Page<T> {
   totalPages: number;
   totalElements: number;

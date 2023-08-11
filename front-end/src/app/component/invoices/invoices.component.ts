@@ -38,7 +38,7 @@ export class InvoicesComponent implements OnInit {
     this.invoicesState$ = this.customerService.invoicePage$().pipe(
       map((response) => {
         this.dataSubject.next(response);
-        this.currentPageSubject.next(response.data?.invoices?.number);
+        this.currentPageSubject.next(response.data?.page?.number);
         this.isLoadingSubject.next(false);
         return { dataState: DataState.LOADED, data: response };
       }),
@@ -58,7 +58,7 @@ export class InvoicesComponent implements OnInit {
     this.invoicesState$ = this.customerService.invoicePage$(pageNumber).pipe(
       map((response) => {
         this.dataSubject.next(response);
-        this.currentPageSubject.next(response.data?.invoices?.number);
+        this.currentPageSubject.next(response.data?.page?.number);
         this.isLoadingSubject.next(false);
         console.log(this.currentPageSubject.value)
         return { dataState: DataState.LOADED, data: response };

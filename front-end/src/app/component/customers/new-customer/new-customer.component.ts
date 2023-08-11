@@ -8,7 +8,6 @@ import {
   of,
   startWith,
 } from 'rxjs';
-import { Customer } from '../../../interface/customer';
 import { CustomHttpResponse } from '../../../interface/customHttpResponse';
 import { ResponseData } from '../../../interface/appstates';
 import { CustomerService } from '../../../services/customer.service';
@@ -22,7 +21,9 @@ import { State } from '../../../interface/state';
 })
 export class NewCustomerComponent implements OnInit {
   readonly DataState = DataState;
-  newCustomerState$: Observable<State<CustomHttpResponse<ResponseData>>> | undefined ;
+  newCustomerState$:
+    | Observable<State<CustomHttpResponse<ResponseData>>>
+    | undefined;
   private dataSubject = new BehaviorSubject<
     CustomHttpResponse<ResponseData> | undefined
   >(undefined);
@@ -30,30 +31,34 @@ export class NewCustomerComponent implements OnInit {
   isLoading$ = this.isLoadingSubject.asObservable();
 
   constructor(private customerService: CustomerService) {}
+
   ngOnInit(): void {
+    this.isLoadingSubject.next(true);
     this.newCustomerState$ = this.customerService.customers$().pipe(
       map((response) => {
         this.dataSubject.next(response);
+        this.isLoadingSubject.next(false);
         return { dataState: DataState.LOADED, data: response };
       }),
       startWith({ dataState: DataState.LOADING }),
-      catchError((err: string) => {
+      catchError((error) => {
         this.isLoadingSubject.next(false);
         return of({
           dataState: DataState.ERROR,
-          error: err,
+          error
         });
       })
     );
   }
   createCustomer(newCustomerForm: NgForm) {
+    console.log(newCustomerForm.value);
+
     this.isLoadingSubject.next(true);
     this.newCustomerState$ = this.customerService
       .newCustomer$(newCustomerForm.value)
       .pipe(
-        map((response) => {
-          console.log(response);
-          newCustomerForm.reset({ type: 'INSTITUTION', status: 'ACTIVE' });
+        map(() => {
+          newCustomerForm.reset({ type: 'INDIVIDUAL', status: 'ACTIVE' });
           this.isLoadingSubject.next(false);
           return {
             dataState: DataState.LOADED,
@@ -69,8 +74,8 @@ export class NewCustomerComponent implements OnInit {
           this.isLoadingSubject.next(false);
           return of({
             dataState: DataState.ERROR,
-            error,
             data: this.dataSubject.value,
+            error,
           });
         })
       );

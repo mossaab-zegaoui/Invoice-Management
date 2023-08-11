@@ -21,17 +21,17 @@
             <div class="form-outline mb-2">
               <label class="form-label" for="firstName">First Name</label>
               <input type="text" [disabled]="state.dataState === DataState.LOADING" ngModel name="firstName"
-                class="form-control" required minlength="2" />
+                class="form-control" required minlength="4" />
             </div>
             <div class="form-outline mb-2">
               <label for="lastName" class="form-label">Last name</label>
               <input type="text" [disabled]="state.dataState === DataState.LOADING" ngModel name="lastName"
-                class="form-control" required minlength="2" />
+                class="form-control" required minlength="4" />
             </div>
             <div class="form-outline mb-2">
               <label for="password" class="form-label">Email</label>
               <input type="email" [disabled]="state.dataState === DataState.LOADING" ngModel name="email"
-                class="form-control" required minlength="3" />
+                class="form-control" required minlength="10" />
             </div>
             <div class="form-outline mb-2">
               <label for="password" class="form-label">Password</label>
@@ -59,7 +59,7 @@
               <a [ngStyle]="{
                               'pointer-events':
                                 state.dataState === DataState.LOADING ? 'none' : 'auto'
-                            }" [routerLink]="['/resetpassword']">Forgot password?</a>
+                            }" [routerLink]="['/reset-password']">Forgot password?</a>
             </div>
           </div>
         </div>

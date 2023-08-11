@@ -27,7 +27,7 @@ public class ExceptionUtils {
             HttpResponse httpResponse = getHttpRequest(response, exception.getMessage(), BAD_REQUEST);
             writeResponse(response, httpResponse);
         } else if (exception instanceof TokenExpiredException) {
-            HttpResponse httpResponse = getHttpRequest(response, "Authorization Error", UNAUTHORIZED);
+            HttpResponse httpResponse = getHttpRequest(response, exception.getMessage(), UNAUTHORIZED);
             writeResponse(response, httpResponse);
         } else {
             HttpResponse httpResponse = getHttpRequest(response, "An error occur at "+ request.getRequestURI(), INTERNAL_SERVER_ERROR);

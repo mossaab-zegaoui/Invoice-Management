@@ -9,7 +9,7 @@ import {
   startWith,
 } from 'rxjs';
 import { DataState } from 'src/app/enum/dataState.enum';
-import { ResponseData } from 'src/app/interface/appstates';
+import { Profile, ResponseData } from 'src/app/interface/appstates';
 import { CustomHttpResponse } from 'src/app/interface/customHttpResponse';
 import { State } from 'src/app/interface/state';
 import { UserService } from 'src/app/services/user.service';
@@ -21,13 +21,11 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class ProfileComponent implements OnInit {
   readonly DataState = DataState;
-  profileState$:
-    | Observable<State<CustomHttpResponse<ResponseData>>>
-    | undefined;
+  profileState$: Observable<State<CustomHttpResponse<Profile>>> | undefined;
   isLoadingSubject = new BehaviorSubject<boolean>(false);
-  dataSubject = new BehaviorSubject<
-    CustomHttpResponse<ResponseData> | undefined
-  >(undefined);
+  dataSubject = new BehaviorSubject<CustomHttpResponse<Profile> | undefined>(
+    undefined
+  );
   isLoading$ = this.isLoadingSubject.asObservable();
   constructor(private userService: UserService) {}
   ngOnInit(): void {
@@ -76,7 +74,11 @@ export class ProfileComponent implements OnInit {
       passwordForm.value.newPassword !== passwordForm.value.confirmNewPassword
     ) {
       passwordForm.reset();
-      alert('newPassword and verificationPassword are not equal');
+      this.profileState$ = of({
+        dataState: DataState.ERROR,
+        data: this.dataSubject.value,
+        error: 'new Password and verification password has to be the same',
+      });
       return this.isLoadingSubject.next(false);
     }
 
@@ -84,9 +86,9 @@ export class ProfileComponent implements OnInit {
       .updateUserPassword$(passwordForm.value)
       .pipe(
         map((response) => {
-          this.isLoadingSubject.next(false);
           this.dataSubject.next(response);
           passwordForm.reset();
+          this.isLoadingSubject.next(false);
           return { dataState: DataState.LOADED, data: response };
         }),
         startWith({
@@ -98,7 +100,7 @@ export class ProfileComponent implements OnInit {
           return of({
             dataState: DataState.ERROR,
             data: this.dataSubject.value,
-            error: error,
+            error
           });
         })
       );
@@ -148,7 +150,7 @@ export class ProfileComponent implements OnInit {
           return of({
             dataState: DataState.ERROR,
             data: this.dataSubject.value,
-            error: error,
+            error
           });
         })
       );
@@ -178,7 +180,6 @@ export class ProfileComponent implements OnInit {
     const inputElement = event.target as HTMLInputElement;
     const image = inputElement.files?.[0];
     this.isLoadingSubject.next(true);
-    console.log(image);
     if (image) {
       this.profileState$ = this.userService
         .uploadProfileImage$(this.getFormData(image))

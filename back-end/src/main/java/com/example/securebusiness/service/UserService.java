@@ -12,6 +12,7 @@ public interface UserService {
     UserDTO createUser(User user);
 
     User getUserById(Long userId);
+    UserDTO getUserDtoById(Long userId);
 
     UserDTO getUserDtoByEmail(String email);
     UserDTO getUserDtoByPhoneNumber(String phoneNumber);

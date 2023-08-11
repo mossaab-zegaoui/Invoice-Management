@@ -1,0 +1,10 @@
+.btn-create {
+    background-color: #1a8e98;
+    border: none;
+  }
+  .other-account-link {
+    color: #0d6efd;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  

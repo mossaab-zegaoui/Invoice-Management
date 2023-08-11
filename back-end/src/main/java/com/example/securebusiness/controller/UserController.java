@@ -1,17 +1,16 @@
 package com.example.securebusiness.controller;
 
-import com.example.securebusiness.form.PasswordDto;
-import com.example.securebusiness.model.SmsRequest;
 import com.example.securebusiness.dto.UserDTO;
 import com.example.securebusiness.exception.ApiException;
 import com.example.securebusiness.form.AccountSettingsForm;
 import com.example.securebusiness.form.LoginForm;
+import com.example.securebusiness.form.PasswordDto;
 import com.example.securebusiness.form.UpdatePasswordForm;
 import com.example.securebusiness.model.HttpResponse;
+import com.example.securebusiness.model.SmsRequest;
 import com.example.securebusiness.model.User;
 import com.example.securebusiness.model.UserPrincipal;
 import com.example.securebusiness.provider.TokenProvider;
-import com.example.securebusiness.service.EmailService;
 import com.example.securebusiness.service.PasswordResetService;
 import com.example.securebusiness.service.RoleService;
 import com.example.securebusiness.service.UserService;
@@ -19,7 +18,6 @@ import com.example.securebusiness.service.impl.SmsService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,10 +32,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
+import static com.example.securebusiness.utils.SecurityConstant.TOKEN_HEADER;
 import static java.time.LocalTime.now;
 import static java.util.Map.of;
+import static java.util.Optional.ofNullable;
+import static org.apache.logging.log4j.util.Strings.EMPTY;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 
@@ -176,6 +177,7 @@ public class UserController {
                 .status(OK)
                 .build();
     }
+
     @GetMapping("reset-password/validate")
     public HttpResponse validateResetPassword(@RequestParam @NotBlank String token) {
         passwordResetService.validateResetPassword(token);
@@ -195,6 +197,29 @@ public class UserController {
                 .status(OK)
                 .build();
     }
+
+    @GetMapping("refresh-token")
+    public HttpResponse refreshToken(HttpServletRequest request) {
+        if (isHeaderAndTokenValid(request)) {
+            UserDTO userDto = userService.getUserDtoById(tokenProvider.getSubject(getToken(request), request));
+            return HttpResponse.builder()
+                    .timeStamp(LocalDateTime.now().toString())
+                    .data(of(
+                            "user", userDto,
+                            "access_token", tokenProvider.createAccessToken(getUserPrincipal(userDto)),
+                            "refresh_token", getToken(request)))
+                    .message("Token has been refreshed")
+                    .status(OK)
+                    .build();
+        }
+        return HttpResponse.builder()
+                .timeStamp(LocalDateTime.now().toString())
+                .message("Refresh token is missing")
+                .developerMessage("Refresh token is missing or invalid")
+                .status(OK)
+                .build();
+    }
+
     private HttpResponse sendVerificationCode(UserDTO userDTO) {
         smsService.sendSms(new SmsRequest(userDTO.getPhone(), null));
         return HttpResponse.builder()
@@ -231,5 +256,18 @@ public class UserController {
 
     private UserPrincipal getUserPrincipal(UserDTO userDTO) {
         return new UserPrincipal(userService.getUser(userDTO.getEmail()));
+    }
+
+    private boolean isHeaderAndTokenValid(HttpServletRequest request) {
+        return request.getHeader(AUTHORIZATION) != null
+                && request.getHeader(AUTHORIZATION).startsWith(TOKEN_HEADER)
+                && tokenProvider.isTokenValid(tokenProvider.getSubject(getToken(request), request),
+                getToken(request));
+    }
+
+    private String getToken(HttpServletRequest request) {
+        return ofNullable(request.getHeader(AUTHORIZATION))
+                .filter(header -> header.startsWith(TOKEN_HEADER))
+                .map(token -> token.replace(TOKEN_HEADER, EMPTY)).get();
     }
 }

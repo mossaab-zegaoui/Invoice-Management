@@ -8,6 +8,8 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.example.securebusiness.model.UserPrincipal;
 import com.example.securebusiness.service.UserService;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,11 +20,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
+import static com.auth0.jwt.algorithms.Algorithm.HMAC256;
+
 import static com.example.securebusiness.utils.SecurityConstant.*;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.stream;
@@ -37,23 +41,25 @@ public class TokenProvider {
     public String createAccessToken(UserPrincipal userPrincipal) {
         String[] claims = getClaimsFromUser(userPrincipal);
         return JWT.create().withIssuer(Issuer).withAudience(ApplicationAudience)
-                .withIssuedAt(new Date()).withSubject(String.valueOf(userPrincipal.getUser().getId())).withArrayClaim(AUTHORITIES, claims)
+                .withIssuedAt(new Date())
+                .withSubject(String.valueOf(userPrincipal.getUser().getId()))
+                .withArrayClaim(AUTHORITIES, claims)
                 .withExpiresAt(new Date(currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_TIME))
-                .sign(HMAC512(SECRET_KEY.getBytes()));
+                .sign(HMAC256(SECRET_KEY));
+
     }
 
     public String createRefreshToken(UserPrincipal userPrincipal) {
-        String[] claims = getClaimsFromUser(userPrincipal);
         return JWT.create().withIssuer(Issuer).withAudience(ApplicationAudience)
-                .withIssuedAt(new Date()).withSubject(String.valueOf(userPrincipal.getUser().getId()))
+                .withIssuedAt(new Date())
+                .withSubject(String.valueOf(userPrincipal.getUser().getId()))
                 .withExpiresAt(new Date(currentTimeMillis() + REFRESH_TOKEN_EXPIRATION_TIME))
-                .sign(HMAC512(SECRET_KEY.getBytes()));
+                .sign(HMAC256(SECRET_KEY));
     }
 
     public Long getSubject(String token, HttpServletRequest request) {
-        JWTVerifier verifier = getJWTVerifier();
         try {
-            return Long.valueOf(verifier.verify(token).getSubject());
+            return Long.valueOf(getJWTVerifier().verify(token).getSubject());
         } catch (TokenExpiredException exception) {
             request.setAttribute("expiredMessage", exception.getMessage());
             throw exception;
@@ -81,6 +87,11 @@ public class TokenProvider {
         return !Objects.isNull(userId) && !isTokenExpired(verifier, token);
     }
 
+    private Key getSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
     private boolean isTokenExpired(JWTVerifier verifier, String token) {
         Date expiration = verifier.verify(token).getExpiresAt();
         return expiration.before(new Date());
@@ -98,7 +109,7 @@ public class TokenProvider {
     private JWTVerifier getJWTVerifier() {
         JWTVerifier verifier;
         try {
-            Algorithm algorithm = HMAC512(SECRET_KEY.getBytes());
+            Algorithm algorithm = HMAC256(SECRET_KEY);
             verifier = JWT.require(algorithm).withIssuer(Issuer).build();
         } catch (JWTVerificationException exception) {
             throw new JWTVerificationException(TOKEN_CANNOT_BE_VERIFIED);

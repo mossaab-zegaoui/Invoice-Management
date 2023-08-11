@@ -65,14 +65,14 @@
                     <div class="col-md-6" style="margin-bottom: 15px">
                       <label>Type</label>
                       <select name="type" ngModel="INDIVIDUAL" class="form-control" required>
+                        <option value="INSTITUTION">INSTITUTION</option>
                         <option value="INDIVIDUAL">INDIVIDUAL</option>
-                        <option [selected]="true">INSTITUTION</option>
                       </select>
                     </div>
                     <div class="col-md-6" style="margin-bottom: 15px">
                       <label>Status</label>
                       <select name="status" ngModel="ACTIVE" class="form-control" required>
-                        <option [selected]="true" value="ACTIVE">ACTIVE</option>
+                        <option value="ACTIVE">ACTIVE</option>
                         <option value="BANNED">BANNED</option>
                         <option value="PENDING">PENDING</option>
                         <option value="INACTIVE">INACTIVE</option>

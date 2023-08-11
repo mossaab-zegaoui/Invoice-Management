@@ -12,7 +12,7 @@ import { CustomHttpResponse } from 'src/app/interface/customHttpResponse';
 import { Customer } from 'src/app/interface/customer';
 import { State } from 'src/app/interface/state';
 import { CustomerService } from 'src/app/services/customer.service';
-import { ApiResponse, ResponseData } from 'src/app/interface/appstates';
+import { ApiResponse } from 'src/app/interface/appstates';
 import { CustomerActionType } from '../../interface/actions';
 import { CustomerBehaviourService } from '../../services/customer-behaviour.service';
 import { Router } from '@angular/router';
@@ -32,6 +32,7 @@ export class HomeComponent implements OnInit {
   >(undefined);
   currentPageSubject = new BehaviorSubject<number | undefined>(0);
   currentPage$ = this.currentPageSubject.asObservable();
+
   constructor(
     private customerService: CustomerService,
     private customerSubject: CustomerBehaviourService,
@@ -42,15 +43,15 @@ export class HomeComponent implements OnInit {
     this.homeState$ = this.customerService.pageCustomers$().pipe(
       map((response) => {
         this.dataSubject.next(response);
-        this.currentPageSubject.next(response?.data?.customers?.number);
+        this.currentPageSubject.next(response?.data?.page?.number);
         return { dataState: DataState.LOADED, data: this.dataSubject.value };
       }),
       startWith({ dataState: DataState.LOADING }),
-      catchError((err) =>
+      catchError((error) =>
         of({
           dataState: DataState.ERROR,
           data: this.dataSubject.value,
-          error: err,
+          error
         })
       )
     );
@@ -65,7 +66,7 @@ export class HomeComponent implements OnInit {
     });
     this.router.navigate(['/customers']);
   }
-  goToPage(index: number | undefined) {
+  goToPage(index: number) {
     this.homeState$ = this.customerService.pageCustomers$(index).pipe(
       map((response) => {
         this.dataSubject.next(response);
@@ -73,11 +74,11 @@ export class HomeComponent implements OnInit {
         return { dataState: DataState.LOADED, data: this.dataSubject.value };
       }),
       startWith({ dataState: DataState.LOADING, data: this.dataSubject.value }),
-      catchError((err) =>
+      catchError((error) =>
         of({
           dataState: DataState.ERROR,
           data: this.dataSubject.value,
-          error: err,
+          error
         })
       )
     );
