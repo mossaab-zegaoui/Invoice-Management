@@ -37,27 +37,27 @@
               </div>
             </form>
           </div>
-          <ng-container *ngIf="state.data?.data?.customers?.content!.length > 0">
-            <app-customer-list [customers]="state.data?.data?.customers?.content"></app-customer-list>
+          <ng-container *ngIf="state.data?.data?.page?.content!.length > 0">
+            <app-customer-list [customers]="state.data?.data?.page?.content"></app-customer-list>
             <nav aria-label="Page navigation">
               <ul class="pagination justify-content-end">
-                <li class="page-item" [ngClass]="state.data?.data?.customers?.number === 0?'disabled':'' ">
+                <li class="page-item" [ngClass]="state.data?.data?.page?.number === 0?'disabled':'' ">
                   <a class="page-link pointer" (click)="goToNextOrPreviousPage('backward')" tabindex="-1">Previous</a>
                 </li>
                 <li class="page-item pointer "
-                  *ngFor="let pageNumber of state.data?.data?.customers?.totalPages | extractArrayValue :'number'">
+                  *ngFor="let pageNumber of state.data?.data?.page?.totalPages | extractArrayValue :'number'">
                   <a class="page-link" [ngClass]="(currentPage$ | async) === pageNumber ? ' active':''"
                     (click)="goToPage(pageNumber)">
                     {{pageNumber + 1}}
                   </a>
                 <li class="page-item pointer"
-                  [ngClass]="state.data?.data?.customers?.totalPages! -1 ===(currentPage$| async)?'disabled':'' ">
+                  [ngClass]="state.data?.data?.page?.totalPages! -1 ===(currentPage$| async)?'disabled':'' ">
                   <a class="page-link " (click)="goToNextOrPreviousPage('forward')">Next</a>
                 </li>
               </ul>
             </nav>
           </ng-container>
-          <ng-container *ngIf="state.data?.data?.customers?.content!.length === 0">
+          <ng-container *ngIf="state.data?.data?.page?.content!.length === 0">
             0 Result found
           </ng-container>
         </div>

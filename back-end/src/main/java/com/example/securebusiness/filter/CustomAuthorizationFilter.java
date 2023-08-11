@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.example.securebusiness.utils.SecurityConstant.PUBLIC_URLS;
+import static com.example.securebusiness.utils.SecurityConstant.TOKEN_HEADER;
 import static org.apache.logging.log4j.util.Strings.EMPTY;
 
 import org.springframework.security.core.Authentication;
@@ -30,20 +31,13 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Slf4j
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
-    private static final String TOKEN_PREFIX = "Bearer ";
     private static final String HTTP_OPTIONS_METHOD = "OPTIONS";
-    private static final String[] PUBLIC_ROUTES = {"/user/register", "/user/login", "/user/verify/code",
-            "/user/refresh/token", "user/image", "/user/new/password", "/user/resetpassword1"};
     protected static final String EMAIL_KEY = "email";
     protected static final String TOKEN_KEY = "token";
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
         try {
-            if (request.getRequestURI().contains("/user/resetpassword1")) {
-                filterChain.doFilter(request, response);
-                return;
-            }
             String token = getToken(request);
             Long userId = getUserId(request);
             if (tokenProvider.isTokenValid(userId, token)) {
@@ -65,7 +59,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         return request.getHeader(AUTHORIZATION) == null ||
-                !request.getHeader(AUTHORIZATION).startsWith(TOKEN_PREFIX) ||
+                !request.getHeader(AUTHORIZATION).startsWith(TOKEN_HEADER) ||
                 request.getMethod().equalsIgnoreCase(HTTP_OPTIONS_METHOD) ||
                 asList(PUBLIC_URLS).contains(request.getRequestURI());
     }
@@ -76,7 +70,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     private String getToken(HttpServletRequest request) {
         return ofNullable(request.getHeader(AUTHORIZATION))
-                .filter(header -> header.startsWith(TOKEN_PREFIX))
-                .map(token -> token.replace(TOKEN_PREFIX, EMPTY)).get();
+                .filter(header -> header.startsWith(TOKEN_HEADER))
+                .map(token -> token.replace(TOKEN_HEADER, EMPTY)).get();
     }
 }

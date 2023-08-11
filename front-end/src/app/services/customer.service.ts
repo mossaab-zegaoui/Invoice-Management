@@ -22,7 +22,7 @@ export class CustomerService {
 
   pageCustomers$(
     page: number = 0,
-    size: number = 10
+    size: number = 7
   ): Observable<CustomHttpResponse<ApiResponse<Customer[]>>> {
     return this.http
       .get<CustomHttpResponse<ApiResponse<Customer[]>>>(

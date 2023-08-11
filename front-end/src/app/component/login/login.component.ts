@@ -12,7 +12,6 @@ import {
 import { DataState } from 'src/app/enum/dataState.enum';
 import { Token } from 'src/app/enum/token.enum';
 import { LoginState } from 'src/app/interface/appstates';
-import { SmsRequest } from 'src/app/interface/smsRequest';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -25,9 +24,7 @@ export class LoginComponent implements OnInit {
   loginState$: Observable<LoginState> = of({
     dataState: DataState.LOADED,
   });
-  phoneSubject = new BehaviorSubject<string | undefined>('');
-  isLoadingSubject = new BehaviorSubject<boolean>(false);
-  isLoading$ = this.isLoadingSubject.asObservable();
+  phoneSubject = new BehaviorSubject<string>('');
 
   constructor(private userService: UserService, private router: Router) {}
   ngOnInit(): void {
@@ -41,7 +38,7 @@ export class LoginComponent implements OnInit {
       .pipe(
         map((response) => {
           if (response.data?.user.usingMfa) {
-            this.phoneSubject.next(response.data.user.phone);
+            this.phoneSubject.next(response.data?.user.phone!);
             return {
               dataState: DataState.LOADED,
               loginSuccess: false,
@@ -63,22 +60,20 @@ export class LoginComponent implements OnInit {
           }
         }),
         startWith({ dataState: DataState.LOADING, loginSuccess: false }),
-        catchError((err) =>
+        catchError((error) =>
           of({
             dataState: DataState.ERROR,
             loginSuccess: false,
-            error: err,
+            error,
           })
         )
       );
   }
   verifyCode(verifyCodeForm: NgForm) {
-    this.isLoadingSubject.next(true);
     this.loginState$ = this.userService
       .verifyCode$(this.phoneSubject.value, verifyCodeForm.value.code)
       .pipe(
         map((response) => {
-          this.isLoadingSubject.next(false);
           localStorage.setItem(Token.ACCESS_TOKEN, response.data!.access_token);
           localStorage.setItem(
             Token.REFRESH_TOKEN,
@@ -110,6 +105,6 @@ export class LoginComponent implements OnInit {
   }
 
   loginPage() {
-    return of({ dataState: DataState.LOADED, loginSuccess: false });
+    this.loginState$ = of({ dataState: DataState.LOADED, loginSuccess: false });
   }
 }

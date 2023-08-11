@@ -32,7 +32,7 @@
                                 </tr>
                             </thead>
                             <tbody class="table-body">
-                                <tr *ngFor="let invoice of state?.data?.data?.invoices?.content" class="cell-1">
+                                <tr *ngFor="let invoice of state?.data?.data?.page?.content" class="cell-1">
                                     <td>{{ invoice.invoiceNumber }}</td>
                                     <td>{{ invoice.services }}</td>
                                     <td>
@@ -67,14 +67,14 @@
                                         tabindex="-1">Previous</a>
                                 </li>
                                 <li class="page-item pointer "
-                                    *ngFor="let pageNumber of state.data?.data?.invoices?.totalPages | extractArrayValue :'number'">
+                                    *ngFor="let pageNumber of state.data?.data?.page?.totalPages | extractArrayValue :'number'">
                                     <a class="page-link"
                                         [ngClass]="(currentPage$ | async) === pageNumber ? '  active':''"
                                         (click)="goToPage(pageNumber)">
                                         {{pageNumber + 1}}
                                     </a>
                                 <li class="page-item pointer"
-                                    [ngClass]="state.data?.data?.invoices?.totalPages! -1 === (currentPage$ | async)?' disabled':'' ">
+                                    [ngClass]="state.data?.data?.page?.totalPages! -1 === (currentPage$ | async)?' disabled':'' ">
 
                                     <a class="page-link " (click)="goToNextOrPreviousPage('forward')">Next</a>
                                 </li>

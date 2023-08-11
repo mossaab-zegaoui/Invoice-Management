@@ -6,7 +6,6 @@ import { Profile, ResponseData } from '../interface/appstates';
 import { Token } from '../enum/token.enum';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { CustomHttpResponse } from '../interface/customHttpResponse';
-import { ResolveData } from '@angular/router';
 import { NgForm } from '@angular/forms';
 
 @Injectable({
@@ -35,7 +34,7 @@ export class UserService {
   }
 
   verifyCode$(
-    phoneNumber: string | undefined,
+    phoneNumber: string,
     OTP: string
   ): Observable<CustomHttpResponse<Profile>> {
     return this.http
@@ -44,6 +43,30 @@ export class UserService {
         OTP,
       })
       .pipe(tap(console.log), catchError(this.handleError));
+  }
+  refreshToken$(): Observable<CustomHttpResponse<Profile>> {
+    return this.http
+      .get<CustomHttpResponse<Profile>>(`${this.apiUrl}/refresh-token`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(Token.REFRESH_TOKEN)!}`,
+        },
+      })
+      .pipe(
+        tap((response) => {
+          console.log
+          localStorage.removeItem(Token.ACCESS_TOKEN);
+          localStorage.removeItem(Token.REFRESH_TOKEN);
+          localStorage.setItem(
+            Token.ACCESS_TOKEN,
+            response.data?.access_token!
+          );
+          localStorage.setItem(
+            Token.REFRESH_TOKEN,
+            response.data?.refresh_token!
+          );
+        }),
+        catchError(this.handleError)
+      );
   }
   resetPassword$(email: string): Observable<CustomHttpResponse<any>> {
     return this.http
@@ -59,10 +82,7 @@ export class UserService {
       )
       .pipe(tap(console.log), catchError(this.handleError));
   }
-  updatePasswod$(
-    form: NgForm,
-
-  ): Observable<CustomHttpResponse<any>> {
+  updatePasswod$(form: NgForm): Observable<CustomHttpResponse<any>> {
     return this.http
       .post<CustomHttpResponse<any>>(`${this.apiUrl}/update-password`, form)
       .pipe(tap(console.log), catchError(this.handleError));
@@ -74,23 +94,22 @@ export class UserService {
   isAuthenticated(): boolean {
     return this.jwtHelper.decodeToken<string>(
       localStorage.getItem(Token.ACCESS_TOKEN)!
-    ) &&
-      !this.jwtHelper.isTokenExpired(localStorage.getItem(Token.ACCESS_TOKEN))
+    )
       ? true
       : false;
   }
 
-  profile$(): Observable<CustomHttpResponse<ResponseData>> {
+  profile$(): Observable<CustomHttpResponse<Profile>> {
     return this.http
-      .get<CustomHttpResponse<ResponseData>>(`${this.apiUrl}/profile`)
+      .get<CustomHttpResponse<Profile>>(`${this.apiUrl}/profile`)
       .pipe(tap(console.log), catchError(this.handleError));
   }
   updateUserDetails$(
     user: User,
     id: number
-  ): Observable<CustomHttpResponse<ResponseData>> {
+  ): Observable<CustomHttpResponse<Profile>> {
     return this.http
-      .put<CustomHttpResponse<ResponseData>>(`${this.apiUrl}/${id}`, user)
+      .put<CustomHttpResponse<Profile>>(`${this.apiUrl}/${id}`, user)
       .pipe(tap(console.log, catchError(this.handleError)));
   }
 
@@ -98,19 +117,14 @@ export class UserService {
     currentPassword: string;
     newPassword: string;
     confirmNewPassword: string;
-  }): Observable<CustomHttpResponse<ResponseData>> {
+  }): Observable<CustomHttpResponse<Profile>> {
     return this.http
-      .put<CustomHttpResponse<ResponseData>>(
-        `${this.apiUrl}/updatePassword`,
-        form
-      )
+      .put<CustomHttpResponse<Profile>>(`${this.apiUrl}/updatePassword`, form)
       .pipe(tap(console.log), catchError(this.handleError));
   }
-  updateUserRole$(
-    roleName: string
-  ): Observable<CustomHttpResponse<ResponseData>> {
+  updateUserRole$(roleName: string): Observable<CustomHttpResponse<Profile>> {
     return this.http
-      .put<CustomHttpResponse<ResponseData>>(
+      .put<CustomHttpResponse<Profile>>(
         `${this.apiUrl}/updateUserRole`,
         roleName
       )
@@ -119,28 +133,25 @@ export class UserService {
   updateUserAccountSettings$(accountSettingsForm: {
     isNotEnabled: boolean;
     isNotLocked: boolean;
-  }): Observable<CustomHttpResponse<ResponseData>> {
+  }): Observable<CustomHttpResponse<Profile>> {
     return this.http
-      .put<CustomHttpResponse<ResponseData>>(
+      .put<CustomHttpResponse<Profile>>(
         `${this.apiUrl}/updateUserAccountSettings`,
         accountSettingsForm
       )
       .pipe(tap(console.log), catchError(this.handleError));
   }
 
-  toggleMfa(): Observable<CustomHttpResponse<ResponseData>> {
+  toggleMfa(): Observable<CustomHttpResponse<Profile>> {
     return this.http
-      .put<CustomHttpResponse<ResponseData>>(`${this.apiUrl}/toggleMfa`, null)
+      .put<CustomHttpResponse<Profile>>(`${this.apiUrl}/toggleMfa`, null)
       .pipe(tap(console.log), catchError(this.handleError));
   }
   uploadProfileImage$(
     formData: FormData
-  ): Observable<CustomHttpResponse<ResponseData>> {
+  ): Observable<CustomHttpResponse<Profile>> {
     return this.http
-      .put<CustomHttpResponse<ResponseData>>(
-        `${this.apiUrl}/uploadImage`,
-        formData
-      )
+      .put<CustomHttpResponse<Profile>>(`${this.apiUrl}/uploadImage`, formData)
       .pipe(tap(console.log), catchError(this.handleError));
   }
   private handleError(error: any): Observable<never> {

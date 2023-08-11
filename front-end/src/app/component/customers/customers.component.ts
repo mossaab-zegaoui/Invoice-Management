@@ -35,7 +35,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
   unsubscribe$: Subscription | null = null;
   currentPageSubject = new BehaviorSubject<number | undefined>(0);
   currentPage$ = this.currentPageSubject.asObservable();
-  searchValue = new BehaviorSubject<string>('');
+  searchValueSubject = new BehaviorSubject<string>('');
   constructor(
     private customerService: CustomerService,
     private customerSubject: CustomerBehaviourService,
@@ -55,11 +55,11 @@ export class CustomersComponent implements OnInit, OnDestroy {
 
   loadCustomers() {
     this.customers$ = this.customerService
-      .searchCustomers$(this.searchValue.value)
+      .searchCustomers$(this.searchValueSubject.value)
       .pipe(
         map((response) => {
           this.dataSubject.next(response);
-          this.currentPageSubject.next(response?.data?.customers?.number);
+          this.currentPageSubject.next(response?.data?.page?.number);
           return { dataState: DataState.LOADED, data: this.dataSubject.value };
         }),
         startWith({
@@ -96,9 +96,9 @@ export class CustomersComponent implements OnInit, OnDestroy {
       .searchCustomers$(searchForm.value.name)
       .pipe(
         map((response) => {
-          this.searchValue.next(searchForm.value.name);
+          this.searchValueSubject.next(searchForm.value.name);
           this.dataSubject.next(response);
-          this.currentPageSubject.next(response?.data?.customers?.number);
+          this.currentPageSubject.next(response?.data?.page?.number);
           return { dataState: DataState.LOADED, data: this.dataSubject.value };
         }),
         startWith({
@@ -116,7 +116,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
   }
   goToPage(index: number | undefined) {
     this.customers$ = this.customerService
-      .searchCustomers$(this.searchValue.value, index)
+      .searchCustomers$(this.searchValueSubject.value, index)
       .pipe(
         map((response) => {
           this.dataSubject.next(response);

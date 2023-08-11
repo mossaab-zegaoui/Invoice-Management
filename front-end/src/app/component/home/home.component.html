@@ -10,7 +10,7 @@
         <div class="col">
           <h4 class="fw-bold text-start">Customers</h4>
         </div>
-       
+
         <div class="col-xm-12 mt-3">
           <table class="table table-hover">
             <thead>
@@ -26,7 +26,7 @@
               </tr>
             </thead>
             <tbody class="table-body" *ngIf="state?.data?.data">
-              <tr *ngFor="let customer of state?.data?.data?.customers?.content" class="cell-1">
+              <tr *ngFor="let customer of state?.data?.data?.page?.content" class="cell-1">
                 <th class="text-center">{{ customer.id }}</th>
                 <td>
                   <img [src]="customer.imageUrl" width="42" height="42" class="rounded-circle" [alt]="customer.name" />
@@ -61,13 +61,13 @@
               <a class="page-link pointer" (click)="goToNextOrPreviousPage('backward')" tabindex="-1">Previous</a>
             </li>
             <li class="page-item pointer "
-              *ngFor="let pageNumber of state.data?.data?.customers?.totalPages | extractArrayValue :'number'">
+              *ngFor="let pageNumber of state.data?.data?.page?.totalPages | extractArrayValue :'number'">
               <a class="page-link" [ngClass]="(currentPage$ | async) === pageNumber ? ' active':''"
                 (click)="goToPage(pageNumber)">
                 {{pageNumber + 1}}
               </a>
             <li class="page-item pointer"
-              [ngClass]="state.data?.data?.customers?.totalPages! -1 === (currentPage$ | async)?' disabled':'' ">
+              [ngClass]="state.data?.data?.page?.totalPages! -1 === (currentPage$ | async)?' disabled':'' ">
 
               <a class="page-link " (click)="goToNextOrPreviousPage('forward')">Next</a>
             </li>

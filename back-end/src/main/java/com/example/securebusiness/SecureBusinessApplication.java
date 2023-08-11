@@ -25,6 +25,7 @@ public class SecureBusinessApplication {
     @Bean
     CommandLineRunner commandLineRunner(RoleRepository roleRepository) {
         return args -> {
+
 //            Role roleUser = new Role();
 //            roleUser.setName(ROLE_USER.name());
 //            roleUser.setPermission("READ:USER, READ:CUSTOMER");

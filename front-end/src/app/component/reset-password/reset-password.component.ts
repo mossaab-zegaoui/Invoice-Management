@@ -9,9 +9,7 @@ import {
   startWith,
 } from 'rxjs';
 import { DataState } from 'src/app/enum/dataState.enum';
-import { RegisterState } from 'src/app/interface/appstates';
-import { CustomHttpResponse } from 'src/app/interface/customHttpResponse';
-import { State } from 'src/app/interface/state';
+import { RegisterAndResetState } from 'src/app/interface/appstates';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -21,7 +19,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class ResetPasswordComponent {
   readonly DataState = DataState;
-  resetPasswordState$: Observable<RegisterState> = of({
+  resetPasswordState$: Observable<RegisterAndResetState> = of({
     dataState: DataState.LOADED,
   });
   isLoadingSubject = new BehaviorSubject<boolean>(false);

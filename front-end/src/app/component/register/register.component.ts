@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Observable, catchError, map, of, startWith } from 'rxjs';
 import { DataState } from 'src/app/enum/dataState.enum';
-import { RegisterState } from 'src/app/interface/appstates';
+import { RegisterAndResetState } from 'src/app/interface/appstates';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -12,9 +12,8 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class RegisterComponent {
   readonly DataState = DataState;
-  registerState$: Observable<RegisterState> = of({
+  registerState$: Observable<RegisterAndResetState> = of({
     dataState: DataState.LOADED,
-    registerSuccess: false,
   });
   constructor(private userService: UserService) {}
   onRegister(registerForm: NgForm) {
@@ -38,6 +37,9 @@ export class RegisterComponent {
     );
   }
   createAccountForm() {
-    return of({ dataState: DataState.LOADED, registerSuccess: false });
+    this.registerState$ = of({
+      dataState: DataState.LOADED,
+      registerSuccess: false,
+    });
   }
 }

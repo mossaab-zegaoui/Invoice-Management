@@ -35,7 +35,7 @@ public class CustomerController {
                 .timeStamp(LocalDateTime.now().toString())
                 .message("Retrieving List of customers")
                 .data(of("user", userService.getUserDtoByEmail(user.getEmail()),
-                        "customers", customers,
+                        "page", customers,
                         "stats", customerService.getStats()))
                 .status(OK)
                 .build();
@@ -95,7 +95,7 @@ public class CustomerController {
         return HttpResponse.builder()
                 .timeStamp(LocalDateTime.now().toString())
                 .data(of(
-                        "invoices", customerService.getInvoices(pageNo, pageSize),
+                        "page", customerService.getInvoices(pageNo, pageSize),
                         "user", userService.getUserDtoByEmail(user.getEmail())))
                 .message("invoices retrieved")
                 .status(OK)
@@ -135,7 +135,7 @@ public class CustomerController {
                 .timeStamp(LocalDateTime.now().toString())
                 .data(of("customers", customerService.getAllCustomers(),
                         "user", userService.getUserDtoByEmail(user.getEmail())))
-                .message("invoice added to customer with id" + id)
+                .message("invoice added successfully")
                 .status(OK)
                 .build();
     }

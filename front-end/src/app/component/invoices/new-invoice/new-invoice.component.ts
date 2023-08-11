@@ -40,7 +40,7 @@ export class NewInvoiceComponent implements OnInit {
       catchError((error) =>
         of({
           dataState: DataState.ERROR,
-          error: error,
+          error,
         })
       )
     );
@@ -54,11 +54,14 @@ export class NewInvoiceComponent implements OnInit {
       )
       .pipe(
         map((response) => {
-          this.isLoadingSubject.next(false);
           this.dataSubject.next(response);
           newInvoiceForm.reset({ status: 'PENDING' });
-          alert('invoice added');
-          return { dataState: DataState.LOADED, data: this.dataSubject.value };
+          this.isLoadingSubject.next(false);
+          return {
+            dataState: DataState.LOADED,
+            data: this.dataSubject.value,
+            success: true,
+          };
         }),
         startWith({
           dataState: DataState.LOADED,
