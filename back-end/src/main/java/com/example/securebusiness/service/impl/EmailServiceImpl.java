@@ -21,7 +21,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendResetEmail(String url, String token, User user) {
-        String resetURL = url + "/reset-password/validate?token=" + token;
+        String resetURL = url + "/reset-password/validate?token=" + token + "&email=" + user.getEmail();
         SimpleMailMessage email = new SimpleMailMessage();
         String subject = "Reset Password";
         email.setFrom(fromEmail);

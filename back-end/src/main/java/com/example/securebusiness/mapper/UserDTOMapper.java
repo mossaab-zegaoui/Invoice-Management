@@ -8,20 +8,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 @AllArgsConstructor
 public class UserDTOMapper {
-    private final RoleRepository roleRepository;
     public static UserDTO fromUser(User user) {
         UserDTO userDTO = new UserDTO();
         BeanUtils.copyProperties(user, userDTO);
         userDTO.setRoleName(user.getRole().getName());
         userDTO.setPermission(user.getRole().getPermission());
-        return userDTO;
-    }
-
-    public static UserDTO fromUser(User user, Role role) {
-        UserDTO userDTO = new UserDTO();
-        BeanUtils.copyProperties(user, userDTO);
-        userDTO.setRoleName(role.getName());
-        userDTO.setPermission(userDTO.getPermission());
         return userDTO;
     }
 

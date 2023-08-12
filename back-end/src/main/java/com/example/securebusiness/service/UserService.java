@@ -33,5 +33,6 @@ public interface UserService {
 
     byte[] downloadImageProfile(User user, String imageUrl) throws IOException;
 
-    void createPasswordResetToken(User user, String token);
+    void createAuthenticationToken(User user, String token);
+
 }

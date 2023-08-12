@@ -1,7 +1,7 @@
 package com.example.securebusiness.controller;
 
 import com.example.securebusiness.dto.UserDTO;
-import com.example.securebusiness.exception.ApiException;
+import com.example.securebusiness.event.onRegistrationCompleteEvent;
 import com.example.securebusiness.form.AccountSettingsForm;
 import com.example.securebusiness.form.LoginForm;
 import com.example.securebusiness.form.PasswordDto;
@@ -19,10 +19,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -52,13 +56,22 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
     private final PasswordResetService passwordResetService;
+    private final ApplicationEventPublisher eventPublisher;
+    @Value("${client-port}")
+    private String PORT;
 
     @PostMapping("register")
-    public HttpResponse register(@RequestBody @Valid User user) {
-        UserDTO userDTO = userService.createUser(user);
+    public HttpResponse register(@RequestBody @Valid User user, HttpServletRequest request) {
+        UserDTO userDto = userService.createUser(user);
+        String appUrl = "http://" + request.getServerName() + ":" + PORT + request.getContextPath();
+
+        eventPublisher.publishEvent(new onRegistrationCompleteEvent(
+                userService.getUserById(user.getId()),
+                request.getLocale(), appUrl)
+        );
         return HttpResponse.builder()
                 .timeStamp(now().toString())
-                .data(of("user", userDTO))
+                .data(of("user", userDto))
                 .message("user created")
                 .status(HttpStatus.CREATED)
                 .build();
@@ -179,11 +192,22 @@ public class UserController {
     }
 
     @GetMapping("reset-password/validate")
-    public HttpResponse validateResetPassword(@RequestParam @NotBlank String token) {
-        passwordResetService.validateResetPassword(token);
+    public HttpResponse validateResetPassword(@RequestParam @NotBlank String token,
+                                              @RequestParam @NotBlank String email) {
+        passwordResetService.validateResetPassword(token, email);
         return HttpResponse.builder()
                 .timeStamp(LocalDateTime.now().toString())
-                .message("reset password token is valid")
+                .message("Authentication Token is valid")
+                .status(OK)
+                .build();
+    }
+    @GetMapping("register/validate")
+    public HttpResponse enableAccount(@RequestParam @NotBlank String token,
+                                              @RequestParam @NotBlank String email) {
+        passwordResetService.enableUserAccount(token, email);
+        return HttpResponse.builder()
+                .timeStamp(LocalDateTime.now().toString())
+                .message("your account has been enabled ")
                 .status(OK)
                 .build();
     }
@@ -234,8 +258,10 @@ public class UserController {
         try {
             Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
             return getLoggedInUser(authenticate);
+        } catch (DisabledException exception) {
+            throw new DisabledException("account is disabled");
         } catch (AuthenticationException exception) {
-            throw new ApiException("Wrong credentials");
+            throw new BadCredentialsException("Wrong credentials");
         }
     }
 

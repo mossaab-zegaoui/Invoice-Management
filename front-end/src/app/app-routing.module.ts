@@ -12,15 +12,16 @@ import { CustomersComponent } from './component/customers/customers.component';
 import { EditCustomerComponent } from './component/customers/edit-customer/edit-customer.component';
 import { InvoiceComponent } from './component/invoice/invoice.component';
 import { ResetPasswordComponent } from './component/reset-password/reset-password.component';
-import { UpdatePasswordComponent } from './component/update-password/update-password.component';
+import { VerifyComponent } from './component/verify/verify.component';
 
 const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   {
     path: 'reset-password/validate',
-    component: UpdatePasswordComponent,
+    component: VerifyComponent,
   },
+  { path: 'register/validate', component: VerifyComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   {
     path: 'home',

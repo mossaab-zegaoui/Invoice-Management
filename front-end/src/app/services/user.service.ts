@@ -53,7 +53,7 @@ export class UserService {
       })
       .pipe(
         tap((response) => {
-          console.log
+          console.log;
           localStorage.removeItem(Token.ACCESS_TOKEN);
           localStorage.removeItem(Token.REFRESH_TOKEN);
           localStorage.setItem(
@@ -75,10 +75,14 @@ export class UserService {
       )
       .pipe(tap(console.log), catchError(this.handleError));
   }
-  validateResetPassword$(token: string): Observable<CustomHttpResponse<any>> {
+  validateResetPassword$(
+    token: string,
+    email: string,
+    type: string
+  ): Observable<CustomHttpResponse<any>> {
     return this.http
       .get<CustomHttpResponse<any>>(
-        `${this.apiUrl}/reset-password/validate?token=${token}`
+        `${this.apiUrl}/${type}/validate?token=${token}&email=${email}`
       )
       .pipe(tap(console.log), catchError(this.handleError));
   }

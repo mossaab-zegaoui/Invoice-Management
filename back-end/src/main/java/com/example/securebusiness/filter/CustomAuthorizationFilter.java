@@ -32,8 +32,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
     private static final String HTTP_OPTIONS_METHOD = "OPTIONS";
-    protected static final String EMAIL_KEY = "email";
-    protected static final String TOKEN_KEY = "token";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
@@ -44,9 +42,9 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 List<GrantedAuthority> authorities = tokenProvider.getAuthorities(token);
                 Authentication authentication = tokenProvider.getAuthentication(userId, authorities, request);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                log.info("Token is valid");
+//                log.info("Token is valid");
             } else {
-                log.info("Token is NOT valid");
+                log.info("Token is  invalid");
                 SecurityContextHolder.clearContext();
             }
             filterChain.doFilter(request, response);
