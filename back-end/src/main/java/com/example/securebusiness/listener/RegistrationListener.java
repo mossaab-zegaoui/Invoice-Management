@@ -6,11 +6,7 @@ import com.example.securebusiness.service.EmailService;
 import com.example.securebusiness.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.message.SimpleMessage;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -30,11 +26,11 @@ public class RegistrationListener implements ApplicationListener<onRegistrationC
     private void confirmRegistration(onRegistrationCompleteEvent event) {
         User user = event.getUser();
         String token = UUID.randomUUID().toString();
-        userService.createPasswordResetToken(user, token);
+        userService.createAuthenticationToken(user, token);
 // Send a verification email
         String recipientEmail = user.getEmail();
-        String confirmationUrl = event.getAppUrl() + "/registrationConfirm?token=" + token;
-        log.info("confirmation url : {}", confirmationUrl);
+        String confirmationUrl =
+                event.getAppUrl() + "/register/validate?token=" + token + "&email=" + user.getEmail();
         emailService.sendVerificationEmail(recipientEmail, confirmationUrl);
     }
 

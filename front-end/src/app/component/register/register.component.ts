@@ -36,6 +36,7 @@ export class RegisterComponent {
       )
     );
   }
+  
   createAccountForm() {
     this.registerState$ = of({
       dataState: DataState.LOADED,

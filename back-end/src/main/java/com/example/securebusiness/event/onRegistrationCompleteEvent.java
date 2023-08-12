@@ -1,5 +1,6 @@
 package com.example.securebusiness.event;
 
+import com.example.securebusiness.dto.UserDTO;
 import com.example.securebusiness.model.User;
 import lombok.Getter;
 import lombok.Setter;

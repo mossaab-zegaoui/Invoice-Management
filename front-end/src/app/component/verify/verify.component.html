@@ -8,7 +8,7 @@
         </div>
     </div>
 
-    <div *ngIf="state.resetPasswordSuccess && !state.updatePasswordSuccess">
+    <div *ngIf="state.verifySuccess && state.type ==='reset-password'">
         <div class="row justify-content-center mt-4">
             <div class="col-md-5    ">
                 <div class="card">
@@ -62,7 +62,7 @@
         </div>
     </div>
     <!-- Success screen -->
-    <div *ngIf="state.updatePasswordSuccess" class="container">
+    <div *ngIf="state.verifySuccess && state.type === 'register'" class="container">
         <div class="row justify-content-center my-5">
             <div class="col-md-6" style="margin-top: 50px">
                 <div class="card">

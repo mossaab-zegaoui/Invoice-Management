@@ -4,10 +4,10 @@ import com.example.securebusiness.dto.UserDTO;
 import com.example.securebusiness.exception.ApiException;
 import com.example.securebusiness.form.AccountSettingsForm;
 import com.example.securebusiness.form.UpdatePasswordForm;
-import com.example.securebusiness.model.PasswordResetToken;
+import com.example.securebusiness.model.AuthenticationToken;
 import com.example.securebusiness.model.Role;
 import com.example.securebusiness.model.User;
-import com.example.securebusiness.repository.PasswordResetTokenRepository;
+import com.example.securebusiness.repository.AuthenticationTokenRepository;
 import com.example.securebusiness.repository.RoleRepository;
 import com.example.securebusiness.repository.UserRepository;
 import com.example.securebusiness.service.UserService;
@@ -33,7 +33,7 @@ import static com.example.securebusiness.utils.SecurityConstant.RESET_PASSWORD_T
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final AuthenticationTokenRepository authenticationTokenRepository;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
             throw new ApiException("email is already taken");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setNotLocked(true);
-        user.setEnabled(true);
+        user.setImageUrl("image_d.png");
         user.setCreatedAt(LocalDateTime.now());
         userRepository.save(user);
         addRoleToUser(ROLE_USER.name(), user.getEmail());
@@ -147,16 +147,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createPasswordResetToken(User user, String token) {
-        PasswordResetToken passwordResetToken = passwordResetTokenRepository
+    public void createAuthenticationToken(User user, String token) {
+        AuthenticationToken authenticationToken = authenticationTokenRepository
                 .findByUser(user)
-                .orElseGet(PasswordResetToken::new);
-        passwordResetToken.setUser(user);
-        passwordResetToken.setToken(token);
-        passwordResetToken.setExpirationDate(LocalDateTime.now().plusDays(RESET_PASSWORD_TOKEN_EXPIRATION_TIME_DAY));
+                .orElseGet(AuthenticationToken::new);
+        authenticationToken.setUser(user);
+        authenticationToken.setToken(token);
+        authenticationToken.setExpirationDate(LocalDateTime.now().plusDays(RESET_PASSWORD_TOKEN_EXPIRATION_TIME_DAY));
 
-        passwordResetTokenRepository.save(passwordResetToken);
+        authenticationTokenRepository.save(authenticationToken);
     }
+
 
     private boolean checkIfValidOldPassword(final String password, final String currentPassword) {
         return passwordEncoder.matches(password, currentPassword);

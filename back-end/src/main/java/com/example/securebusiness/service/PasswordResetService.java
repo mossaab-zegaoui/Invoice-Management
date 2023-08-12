@@ -5,8 +5,10 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public interface PasswordResetService {
     void resetPassword(String email, HttpServletRequest request);
+    void validateResetPassword(String token, String email);
 
-    void validateResetPassword(String token);
+    void enableUserAccount(String token, String email);
 
     void updatePassword(PasswordDto passwordDto);
+
 }
