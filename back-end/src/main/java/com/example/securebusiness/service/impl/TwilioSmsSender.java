@@ -52,14 +52,14 @@ public class TwilioSmsSender implements SmsSender {
         if (!isOtpValid(code, smsRequest.getOTP())) {
             throw new ApiException("Code is invalid please try again");
         }
-//        phoneVerificationCodeRepository.delete(code);
+        phoneVerificationCodeRepository.delete(code);
     }
 
     private void sendVerificationCode(PhoneVerificationCode phoneVerificationCode) {
         PhoneNumber to = new PhoneNumber(phoneVerificationCode.getPhoneNumber());
         PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
         saveVerificationCode(phoneVerificationCode);
-//        MessageCreator creator = Message.creator(to, from, phoneVerificationCode.getVerificationCode());
+        MessageCreator creator = Message.creator(to, from, phoneVerificationCode.getVerificationCode());
 //        creator.create();
         log.info("Sending verification code {} to phone number: {}", phoneVerificationCode.getVerificationCode(), phoneVerificationCode.getPhoneNumber());
 

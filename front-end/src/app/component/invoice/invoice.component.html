@@ -53,7 +53,12 @@
                                             Email: {{ state?.data?.data?.customer?.email }} <br />
                                             Phone: {{ state?.data?.data?.customer?.phone }} <br />
                                             Status:
-                                            <span class="badge bg-success">
+                                            <span class="badge" [ngClass]="[
+                                            state?.data?.data?.invoice?.status === 'PAID' ? ' bg-success' : '',
+                                            state?.data?.data?.invoice?.status === 'UNPAID' ? ' bg-warning' : '',
+                                            state?.data?.data?.invoice?.status === 'CANCELED' ? 'bg-warning' : '',
+                                            state?.data?.data?.invoice?.status === 'OVERDUE' ? ' bg-danger' : ''
+                                          ]">
                                                 {{ state?.data?.data?.invoice?.status }}
                                             </span>
                                         </address>

@@ -16,7 +16,8 @@
           </ol>
         </nav>
         <div *ngSwitchCase="DataState.ERROR"
-          class="alert alert-danger bg-danger text-light border-0 alert-dismissible fade show" style="width: 100vh;" role="alert">
+          class="alert alert-danger bg-danger text-light border-0 alert-dismissible fade show" style="width: 100vh;"
+          role="alert">
           {{ state.error }}
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -49,11 +50,7 @@
                 <i class="bi bi-key-fill" style="margin-right: 12px"></i>
                 Password
               </a>
-              <a class="nav-link" id="security" data-bs-toggle="pill" data-bs-target="#security-tab"
-                aria-selected="true" aria-controls="security" role="tab">
-                <i class="bi bi-shield-shaded" style="margin-right: 12px"></i>
-                Authorization
-              </a>
+             
               <a class="nav-link" id="application" data-bs-toggle="pill" data-bs-target="#application-tab"
                 aria-selected="true" aria-controls="application" role="tab">
                 <i class="bi bi-gear" style="margin-right: 12px"></i> Account
@@ -181,60 +178,7 @@
                 </div>
               </form>
             </div>
-            <div class="tab-pane fade" id="security-tab" role="tabpanel" aria-labelledby="security"
-              style="min-height: 510px">
-              <h3 class="mb-4">Authorization Settings</h3>
-              <form #roleForm="ngForm" (ngSubmit)="updateRole(roleForm)">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label style="margin-bottom: 5px">Role Name</label>
-                      <select name="roleName" [ngModel]="state?.data?.data?.user?.roleName" [disabled]="!(
-  (state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') ||
-  (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
-) || ((isLoading$ | async) === true )" class="form-control select-cl" required>
-                        <option *ngFor="let role of state?.data?.data?.roles" [selected]="
-                              state?.data?.data?.user?.roleName === role.name
-                            " [disabled]="
-                              !(
-                                state?.data?.data?.user?.roleName ===
-                                  'ROLE_SYSADMIN' ||
-                                state?.data?.data?.user?.roleName ===
-                                  'ROLE_ADMIN'
-                              ) || (isLoading$ | async)
-                            " [ngValue]="role.name" class="select-cl">
-                          {{ role.name }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label style="margin-bottom: 5px">Role Permissions</label>
-                      <input type="text" *ngFor="
-                            let permission of state?.data?.data?.user?.permission!.split(
-                              ','
-                            )
-                          " [value]="permission" [disabled]="true" class="form-control" style="margin-bottom: 5px" />
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <button [disabled]="
-                        !(
-                          state?.data?.data?.user?.roleName ===
-                            'ROLE_SYSADMIN' ||
-                          state?.data?.data?.user?.roleName === 'ROLE_ADMIN'
-                        ) || (isLoading$ | async)
-                      " type="submit" class="btn btn-primary btn-update">
-                    <span *ngIf="isLoading$ | async" class="spinner-border spinner-border-sm" role="status"
-                      aria-hidden="true" style="margin-right: 5px"></span>
-                    <span *ngIf="isLoading$ | async">Loading...</span>
-                    <span *ngIf="!(isLoading$ | async)">Update</span>
-                  </button>
-                </div>
-              </form>
-            </div>
+       
             <div class="tab-pane fade" id="application-tab" role="tabpanel" aria-labelledby="application"
               style="min-height: 510px">
               <h3 class="mb-4">Account Settings</h3>
