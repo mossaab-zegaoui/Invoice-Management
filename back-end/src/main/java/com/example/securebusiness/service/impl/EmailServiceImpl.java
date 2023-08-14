@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +20,7 @@ public class EmailServiceImpl implements EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
+    @Async
     @Override
     public void sendResetEmail(String url, String token, User user) {
         String resetURL = url + "/reset-password/validate?token=" + token + "&email=" + user.getEmail();
@@ -29,9 +31,9 @@ public class EmailServiceImpl implements EmailService {
         email.setSubject(subject);
         email.setText("To Reset your password " + "\r\n" + "Please, click  the link below" + "\r\n" + resetURL);
         log.info("reset password url: {}", resetURL);
-//        mailSender.send(email);
+        mailSender.send(email);
     }
-
+    @Async
     @Override
     public void sendVerificationEmail(String recipientEmail, String confirmationUrl) {
         SimpleMailMessage email = new SimpleMailMessage();
@@ -42,6 +44,6 @@ public class EmailServiceImpl implements EmailService {
         email.setText("Thank you for registering with us" + "\r\n" + "Please, click the link below to complete your registration" +
                 "\r\n" + confirmationUrl);
         log.info("verification email\n\n {}", confirmationUrl);
-//        mailSender.send(email);
+        mailSender.send(email);
     }
 }
