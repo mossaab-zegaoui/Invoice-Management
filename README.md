@@ -4,6 +4,8 @@ This document outlines the requirements for an application that manages user acc
 The application will have features such as user registration, user login with token-based authentication, user profile management, 
 role and permission-based authentication, two-factor authentication, customer information management, and invoice management.
 
+**Applications Requirements**
+
 1- User Account
 * Users can create new accounts with a unique email address.
 * Account verification is required to verify the email address.
@@ -14,14 +16,11 @@ role and permission-based authentication, two-factor authentication, customer in
 * Users can log in using their email address and password.
 * Token-based authentication (JWT Token) should be used for user authentication.
 * Role and Permission-based Authentication
-
-3- Authentication and access control should be based on user roles and permissions.
-* User roles can be determined based on their phone number.
   
-4- Two-Factor Authentication
+3- Two-Factor Authentication
 * Two-factor authentication should be implemented using phone numbers.
 
-Customers
+**Customers**
 
 The application should allow users to manage customer information, including name, address, etc.
 * Customers can be individuals or institutions.
@@ -29,14 +28,14 @@ The application should allow users to manage customer information, including nam
 * Search Customers
 * Pagination functionality should be implemented for large customer lists.
 
-Invoices
+**Invoices**
 * Users should be able to create new invoices.
 * Invoices should be associated with a specific customer.
 * The application should provide options to print invoices for mailing.
 * Users should be able to view invoices in spreadsheet format.
 * Invoices should be downloadable as PDF files.
 
-Screen shots
+**Screen shots**
 ![register](https://github.com/mossaab-zegaoui/Invoice-Management/assets/97173944/12c6b773-9c37-412a-a971-c4670a86ba60)
 ![login](https://github.com/mossaab-zegaoui/Invoice-Management/assets/97173944/a1faf3a4-6e85-4913-8c00-7d7d5189e9c5)
 ![reset-password](https://github.com/mossaab-zegaoui/Invoice-Management/assets/97173944/675004cd-feb2-470a-8629-2655d08e5fbd)
