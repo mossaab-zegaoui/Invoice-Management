@@ -18,7 +18,7 @@ import static java.util.Map.of;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
-@RequestMapping("/api/v1/customers")
+@RequestMapping("api/v1/customers")
 @RestController
 @RequiredArgsConstructor
 public class CustomerController {
@@ -40,6 +40,7 @@ public class CustomerController {
                 .status(OK)
                 .build();
     }
+
 
     @GetMapping("{id}")
     public HttpResponse getCustomer(@AuthenticationPrincipal User user, @PathVariable Long id) {

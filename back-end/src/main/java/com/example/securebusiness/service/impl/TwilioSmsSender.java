@@ -60,7 +60,7 @@ public class TwilioSmsSender implements SmsSender {
         PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
         saveVerificationCode(phoneVerificationCode);
         MessageCreator creator = Message.creator(to, from, phoneVerificationCode.getVerificationCode());
-//        creator.create();
+        creator.create();
         log.info("Sending verification code {} to phone number: {}", phoneVerificationCode.getVerificationCode(), phoneVerificationCode.getPhoneNumber());
 
     }
