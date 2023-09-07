@@ -21,6 +21,12 @@
           {{ state.error }}
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
+        <div *ngIf="state?.success"
+          class="alert alert-success bg-success text-light border-0 alert-dismissible fade show" style="width: 100vh;"
+          role="alert">
+          {{ state?.data?.message}}
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
         <div class="bg-white shadow rounded-lg d-block d-sm-flex" style="border-radius: 8px">
           <div class="profile-tab-nav border-right">
             <div class="p-4">
@@ -50,7 +56,7 @@
                 <i class="bi bi-key-fill" style="margin-right: 12px"></i>
                 Password
               </a>
-             
+
               <a class="nav-link" id="application" data-bs-toggle="pill" data-bs-target="#application-tab"
                 aria-selected="true" aria-controls="application" role="tab">
                 <i class="bi bi-gear" style="margin-right: 12px"></i> Account
@@ -72,58 +78,51 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>First Name</label>
-                      <input type="text" name="firstName" [ngModel]="state?.data?.data?.user?.firstName" [disabled]="!((state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') 
-                        || (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
-                        )||(isLoading$ | async)===true" class="form-control" />
+                      <input type="text" name="firstName" [ngModel]="state?.data?.data?.user?.firstName"
+                        [disabled]="(isLoading$ | async)===true" class="form-control" />
                     </div>
 
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Last Name</label>
-                      <input type="text" name="lastName" [ngModel]="state?.data?.data?.user?.lastName" [disabled]="!((state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') 
-                        || (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
-                        )||(isLoading$ | async)===true" class="form-control" />
+                      <input type="text" name="lastName" [ngModel]="state?.data?.data?.user?.lastName"
+                        [disabled]="(isLoading$ | async)===true" class="form-control" />
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="email">Email</label>
-                      <input type="text" name="email" [ngModel]="state?.data?.data?.user?.email" [disabled]=" !((state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') 
-                        || (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
-                        ) ||(isLoading$ | async)===true" class="form-control" />
+                      <input type="text" name="email" [ngModel]="state?.data?.data?.user?.email"
+                        [disabled]="(isLoading$ | async)===true" class="form-control" />
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Phone</label>
-                      <input type="text" name="phone" [ngModel]="state?.data?.data?.user?.phone" [disabled]="!((state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') 
-                        || (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
-                        ) || (isLoading$ | async)===true" class="form-control" />
+                      <input type="text" name="phone" [ngModel]="state?.data?.data?.user?.phone"
+                        [disabled]="(isLoading$ | async)===true" class="form-control" />
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Address</label>
-                      <input type="text" name="address" [ngModel]="state?.data?.data?.user?.address" [disabled]="!((state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') 
-                        || (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
-                        ) ||(isLoading$ | async)===true" class="form-control" />
+                      <input type="text" name="address" [ngModel]="state?.data?.data?.user?.address"
+                        [disabled]="(isLoading$ | async)===true" class="form-control" />
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>Job Title</label>
-                      <input type="text" name="title" [ngModel]="state?.data?.data?.user?.title" [disabled]="!((state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') 
-                        || (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
-                        ) || (isLoading$ | async)===true" class="form-control" />
+                      <input type="text" name="title" [ngModel]="state?.data?.data?.user?.title"
+                        [disabled]="(isLoading$ | async)===true" class="form-control" />
                     </div>
                   </div>
                   <div class="col-md-12">
                     <div class="form-group">
                       <label>Bio</label>
-                      <textarea name="bio" [ngModel]="state?.data?.data?.user?.bio" [disabled]="!((state?.data?.data?.user?.roleName === 'ROLE_SYSADMIN') 
-                        || (state?.data?.data?.user?.roleName === 'ROLE_ADMIN')
-                        ) || (isLoading$ | async)===true" class="form-control" rows="4"></textarea>
+                      <textarea name="bio" [ngModel]="state?.data?.data?.user?.bio"
+                        [disabled]="(isLoading$ | async)===true" class="form-control" rows="4"></textarea>
                     </div>
                   </div>
                 </div>
@@ -178,7 +177,7 @@
                 </div>
               </form>
             </div>
-       
+
             <div class="tab-pane fade" id="application-tab" role="tabpanel" aria-labelledby="application"
               style="min-height: 510px">
               <h3 class="mb-4">Account Settings</h3>
@@ -189,12 +188,7 @@
                     <div class="form-group">
                       <div class="form-check">
                         <input [disabled]="
-                              !(
-                                state?.data?.data?.user?.roleName ===
-                                  'ROLE_SYSADMIN' ||
-                                state?.data?.data?.user?.roleName ===
-                                  'ROLE_ADMIN'
-                              ) || ((isLoading$ | async) === true)
+                              ((isLoading$ | async) === true)
                             " [checked]="state?.data?.data?.user?.enabled" [ngModel]="state?.data?.data?.user?.enabled"
                           type="checkbox" name="enabled" class="form-check-input" />
                         <label class="form-check-label" for="enabled">
@@ -203,12 +197,7 @@
                       </div>
                       <div class="form-check">
                         <input [disabled]="
-                              !(
-                                state?.data?.data?.user?.roleName ===
-                                  'ROLE_SYSADMIN' ||
-                                state?.data?.data?.user?.roleName ===
-                                  'ROLE_ADMIN'
-                              ) || ((isLoading$ | async) === true)
+                              ((isLoading$ | async) === true)
                             " [checked]="state?.data?.data?.user?.notLocked"
                           [ngModel]="state?.data?.data?.user?.notLocked" type="checkbox" name="notLocked"
                           class="form-check-input" />
@@ -221,11 +210,7 @@
                 </div>
                 <div>
                   <button [disabled]="
-                        !(
-                          state?.data?.data?.user?.roleName ===
-                            'ROLE_SYSADMIN' ||
-                          state?.data?.data?.user?.roleName === 'ROLE_ADMIN'
-                        ) || (isLoading$ | async)
+                        (isLoading$ | async)
                       " type="submit" class="btn btn-primary btn-update">
                     <span *ngIf="isLoading$ | async" class="spinner-border spinner-border-sm" role="status"
                       aria-hidden="true" style="margin-right: 5px"></span>
@@ -255,8 +240,7 @@
                     </div>
                     <div class="col-auto">
                       <button (click)="toggleMfa()" [disabled]="
-                            state?.data?.data?.user?.roleName ===
-                              'ROLE_USER' || (isLoading$ | async)
+                            (isLoading$ | async)
                           " class="btn btn-primary btn-sm btn-update">
                         {{
                         state?.data?.data?.user?.usingMfa

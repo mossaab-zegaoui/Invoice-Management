@@ -14,8 +14,8 @@ public class AuthenticationToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String token;
-    @OneToOne
-    private User user;
     private LocalDateTime expirationDate;
+    @OneToOne(cascade = CascadeType.ALL)
+    private User user;
 
 }

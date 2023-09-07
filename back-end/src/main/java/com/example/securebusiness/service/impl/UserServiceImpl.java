@@ -20,7 +20,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Date;
+
 
 import static com.example.securebusiness.enums.RoleType.ROLE_USER;
 import static com.example.securebusiness.mapper.UserDTOMapper.fromUser;
@@ -43,7 +46,6 @@ public class UserServiceImpl implements UserService {
             throw new ApiException("email is already taken");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setNotLocked(true);
-        user.setImageUrl("image_d.png");
         user.setCreatedAt(LocalDateTime.now());
         userRepository.save(user);
         addRoleToUser(ROLE_USER.name(), user.getEmail());
@@ -84,6 +86,8 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ApiException("user " + id + "not found"));
 
+        if (!(user.getEmail().equals(userDto.getEmail())) && userRepository.existsByEmail(userDto.getEmail()))
+            throw new ApiException("email already exists");
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
@@ -108,7 +112,7 @@ public class UserServiceImpl implements UserService {
     public UserDTO updateUserRole(User user, String roleName) {
         Role role = roleRepository.findByName(roleName);
         user.setRole(role);
-        log.info("{} update his role to {}", user.getEmail(), user.getRole().getName());
+        log.info("{} updated his role to {}", user.getEmail(), user.getRole().getName());
         return fromUser(userRepository.save(user));
     }
 
@@ -121,7 +125,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO toggleMfa(User user) {
-        if (user.getPhone().isBlank())
+        if (user.getPhone() == null || user.getPhone().isBlank())
             throw new ApiException("you have to add your phone number before enabling MFA");
         user.setUsingMfa(!user.isUsingMfa());
         return fromUser(userRepository.save(user));
@@ -163,7 +167,7 @@ public class UserServiceImpl implements UserService {
         return passwordEncoder.matches(password, currentPassword);
     }
 
-    private void addRoleToUser(String roleName, String email) {
+    protected void addRoleToUser(String roleName, String email) {
         User user = userRepository.findByEmail(email).get();
         Role role = roleRepository.findByName(roleName);
         user.setRole(role);

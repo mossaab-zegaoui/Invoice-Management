@@ -1,11 +1,13 @@
 package com.example.securebusiness.form;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class UpdatePasswordForm {
     @NotBlank(message = "currentPassword can not empty")
     private String currentPassword;

@@ -1,0 +1,50 @@
+server:
+  port: ${CONTAINER_PORT:8080}
+
+spring:
+  profiles:
+    active: ${ACTIVE_PROFILE:dev}
+  datasource:
+    url: jdbc:mysql://${HOST}:${DB_PORT}/${DATABASE}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    database: mysql
+    properties:
+      hibernate:
+        dialect: ${JPA_DIALECT}
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+      enabled: true
+  sql:
+    init:
+      mode: always
+      continue-on-error: false
+  mail:
+    host: ${EMAIL_HOST}
+    port: ${EMAIL_PORT}
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        transport:
+          protocol: smtp
+  main:
+    allow-circular-references: true
+#twilio
+twilio_account_sid: ${TWILIO_ACCOUNT_SID}
+twilio_auth_token: ${TWILIO_AUTH_TOKEN}
+twilio_phone_number: ${TWILIO_PHONE_NUMBER}
+#front end
+ui:
+  app:
+    url: ${FRONT_END_URL}

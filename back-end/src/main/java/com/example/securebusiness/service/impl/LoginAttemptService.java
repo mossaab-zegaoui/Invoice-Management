@@ -16,7 +16,5 @@ public class LoginAttemptService {
         super();
     }
     public void loginFailed(String remoteAddr) {
-
-
     }
 }

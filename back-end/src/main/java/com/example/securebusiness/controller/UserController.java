@@ -15,6 +15,7 @@ import com.example.securebusiness.service.PasswordResetService;
 import com.example.securebusiness.service.RoleService;
 import com.example.securebusiness.service.UserService;
 import com.example.securebusiness.service.impl.SmsService;
+import com.example.securebusiness.service.impl.StorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -57,17 +58,14 @@ public class UserController {
     private final TokenProvider tokenProvider;
     private final PasswordResetService passwordResetService;
     private final ApplicationEventPublisher eventPublisher;
-    @Value("${client-port}")
-    private String PORT;
 
     @PostMapping("register")
     public HttpResponse register(@RequestBody @Valid User user, HttpServletRequest request) {
         UserDTO userDto = userService.createUser(user);
-        String appUrl = "http://" + request.getServerName() + ":" + PORT + request.getContextPath();
 
         eventPublisher.publishEvent(new onRegistrationCompleteEvent(
                 userService.getUserById(user.getId()),
-                request.getLocale(), appUrl)
+                request.getLocale())
         );
         return HttpResponse.builder()
                 .timeStamp(now().toString())
@@ -81,9 +79,7 @@ public class UserController {
     public HttpResponse login(@RequestBody @Valid LoginForm loginForm) {
         UserDTO userDTO = authenticate(loginForm.getEmail(), loginForm.getPassword());
         return userDTO.isUsingMfa() ? sendVerificationCode(userDTO) : sendResponse(userDTO);
-
     }
-
 
     @GetMapping("profile")
     public HttpResponse profile(@AuthenticationPrincipal User user) {
@@ -201,9 +197,10 @@ public class UserController {
                 .status(OK)
                 .build();
     }
+
     @GetMapping("register/validate")
     public HttpResponse enableAccount(@RequestParam @NotBlank String token,
-                                              @RequestParam @NotBlank String email) {
+                                      @RequestParam @NotBlank String email) {
         passwordResetService.enableUserAccount(token, email);
         return HttpResponse.builder()
                 .timeStamp(LocalDateTime.now().toString())
@@ -253,7 +250,6 @@ public class UserController {
                 .status(OK)
                 .build();
     }
-
     private UserDTO authenticate(String email, String password) {
         try {
             Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));

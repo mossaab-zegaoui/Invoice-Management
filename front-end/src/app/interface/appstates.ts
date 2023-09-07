@@ -4,7 +4,6 @@ import { Customer } from './customer';
 import { Invoice } from './invoice';
 import { Stats } from './stats';
 import { User } from './user';
-import { Data } from '@angular/router';
 
 export interface RegisterAndResetState {
   dataState: DataState;

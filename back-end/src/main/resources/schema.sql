@@ -1,0 +1,20 @@
+CREATE SCHEMA IF NOT EXISTS invoice_management;
+
+USE invoice_management;
+
+INSERT INTO role (name, permission)
+SELECT * FROM (
+                  SELECT  'ROLE_USER', 'READ:USER, READ:CUSTOMER'
+                  UNION ALL
+                  SELECT  'ROLE_MANAGER', 'READ:USER, READ:CUSTOMER, UPDATE:USER, UPDATE:CUSTOMER'
+                  UNION ALL
+                  SELECT  'ROLE_ADMIN', 'READ:USER, READ:CUSTOMER, UPDATE:USER, UPDATE:CUSTOMER, CREATE:USER, CREATE:CUSTOMER'
+                  UNION ALL
+                  SELECT  'ROLE_SYSADMIN', 'READ:USER, READ:CUSTOMER, UPDATE:USER, UPDATE:CUSTOMER, CREATE:USER, CREATE:CUSTOMER, DELETE:USER, DELETE:CUSTOMER'
+              ) AS new_roles
+WHERE (
+          SELECT COUNT(*) FROM role
+      ) < 4;
+
+
+

@@ -89,7 +89,7 @@ export class ProfileComponent implements OnInit {
           this.dataSubject.next(response);
           passwordForm.reset();
           this.isLoadingSubject.next(false);
-          return { dataState: DataState.LOADED, data: response };
+          return { dataState: DataState.LOADED, data: response, success: true };
         }),
         startWith({
           dataState: DataState.LOADING,
@@ -100,7 +100,7 @@ export class ProfileComponent implements OnInit {
           return of({
             dataState: DataState.ERROR,
             data: this.dataSubject.value,
-            error
+            error,
           });
         })
       );
@@ -150,7 +150,7 @@ export class ProfileComponent implements OnInit {
           return of({
             dataState: DataState.ERROR,
             data: this.dataSubject.value,
-            error
+            error,
           });
         })
       );

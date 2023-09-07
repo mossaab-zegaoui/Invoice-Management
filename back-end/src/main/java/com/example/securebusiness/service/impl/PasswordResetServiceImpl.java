@@ -28,16 +28,13 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     private final AuthenticationTokenRepository authenticationTokenRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    @Value("${client-port}")
-    private String port;
 
     @Override
     public void resetPassword(String email, HttpServletRequest request) {
         User user = userService.getUser(email);
         String token = generateToken();
         userService.createAuthenticationToken(user, token);
-        String appUrl = "http://" + request.getServerName() + ":" + port + request.getContextPath();
-        emailService.sendResetEmail(appUrl, token, user);
+        emailService.sendResetEmail( token, user);
     }
 
     @Override

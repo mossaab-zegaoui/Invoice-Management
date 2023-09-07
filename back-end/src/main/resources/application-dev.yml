@@ -1,0 +1,22 @@
+#database
+DB_USERNAME: root
+DB_PASSWORD:
+HOST: localhost
+DB_PORT: 3306
+DATABASE: invoice_management
+#jpa
+JPA_DIALECT: org.hibernate.dialect.MariaDBDialect
+#email
+EMAIL_HOST: smtp.gmail.com
+EMAIL_PORT: 587
+EMAIL_USERNAME: <email_username>
+EMAIL_PASSWORD: <email_password>
+
+#twilio
+TWILIO_ACCOUNT_SID: <account_sid>
+TWILIO_AUTH_TOKEN: <auth_token>
+TWILIO_PHONE_NUMBER: <phone>
+
+#
+FRONT_END_URL: http://localhost:4200
+

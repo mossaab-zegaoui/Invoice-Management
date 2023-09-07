@@ -19,20 +19,23 @@ public class EmailServiceImpl implements EmailService {
     private final JavaMailSender mailSender;
     @Value("${spring.mail.username}")
     private String fromEmail;
+    @Value("${ui.app.url}")
+    private String appUrl;
 
     @Async
     @Override
-    public void sendResetEmail(String url, String token, User user) {
-        String resetURL = url + "/reset-password/validate?token=" + token + "&email=" + user.getEmail();
+    public void sendResetEmail(String token, User user) {
+        String resetURL = appUrl + "/reset-password/validate?token=" + token + "&email=" + user.getEmail();
         SimpleMailMessage email = new SimpleMailMessage();
         String subject = "Reset Password";
         email.setFrom(fromEmail);
         email.setTo(user.getEmail());
         email.setSubject(subject);
         email.setText("To Reset your password " + "\r\n" + "Please, click  the link below" + "\r\n" + resetURL);
-        log.info("reset password url: {}", resetURL);
         mailSender.send(email);
+        log.info("reset password url: {}", resetURL);
     }
+
     @Async
     @Override
     public void sendVerificationEmail(String recipientEmail, String confirmationUrl) {
@@ -43,7 +46,7 @@ public class EmailServiceImpl implements EmailService {
         email.setSubject(subject);
         email.setText("Thank you for registering with us" + "\r\n" + "Please, click the link below to complete your registration" +
                 "\r\n" + confirmationUrl);
-        log.info("verification email\n\n {}", confirmationUrl);
         mailSender.send(email);
+        log.info("verification email\n\n {}", confirmationUrl);
     }
 }
