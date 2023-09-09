@@ -1,24 +1,24 @@
 # Invoice-Management
-
-This document outlines the requirements for an application that manages user accounts, customer information, and invoices.
-The application will have features such as user registration, user login with token-based authentication, user profile management, 
-role and permission-based authentication, two-factor authentication, customer information management, and invoice management.
+Invoice Management is an application that streamlines the process of managing user accounts, customer information, and invoices. 
+It provides a comprehensive set of features to enhance user experience and improve productivity. This document outlines the requirements and functionality of the application.
 
 **Applications Requirements**
 
-1- User Account
-* Users can create new accounts with a unique email address.
-* Account verification is required to verify the email address.
-* Users should provide details such as name, email, position, bio, phone, address, etc.
-* Users should be able to update their personal information.
+  User Account
+1. User Registration:
+
+* Users can create new accounts by providing a unique email address.
+* Account verification is mandatory to ensure the validity of the email address.
+* Users are required to provide essential details such as name, email, position, bio, phone, address, etc.
+* Users should have the ability to update their personal information.
 
 2- User Login
-* Users can log in using their email address and password.
-* Token-based authentication (JWT Token) should be used for user authentication.
-* Role and Permission-based Authentication
+* Users can securely log in using their email address and password.
+* Token-based authentication (JWT Token) will be used for user authentication.
+* Role and permission-based authentication should be implemented to ensure appropriate access control.
   
 3- Two-Factor Authentication
-* Two-factor authentication should be implemented using phone numbers.
+* Two-factor authentication will be implemented using phone numbers to enhance security.
 
 **Customers**
 
