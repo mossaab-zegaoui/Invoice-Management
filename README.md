@@ -4,7 +4,7 @@ It provides a comprehensive set of features to enhance user experience and impro
 
 **Applications Requirements**
 
-  User Account
+**User Account**
 1. User Registration:
 
 * Users can create new accounts by providing a unique email address.
@@ -12,12 +12,12 @@ It provides a comprehensive set of features to enhance user experience and impro
 * Users are required to provide essential details such as name, email, position, bio, phone, address, etc.
 * Users should have the ability to update their personal information.
 
-2- User Login
+2. User Login
 * Users can securely log in using their email address and password.
 * Token-based authentication (JWT Token) will be used for user authentication.
 * Role and permission-based authentication should be implemented to ensure appropriate access control.
   
-3- Two-Factor Authentication
+3. Two-Factor Authentication
 * Two-factor authentication will be implemented using phone numbers to enhance security.
 
 **Customers**
